@@ -1,5 +1,7 @@
 import webbrowser
-
+import subprocess
+import pyperclip
+import time
 from PluginSystem import CommandPlugin, PluginInfo
 from LogSystem.Loggers import plugin_system_logger
 import screen_brightness_control as sbc
@@ -41,6 +43,33 @@ class Main(CommandPlugin):
                              {})
         self.__add_command__(("открой", "браузер"), "browser_open", {},
                              ["Открываю браузер, сэр", "Открываю, сэр", "Конечно, сэр"], {})
+        self.__add_command__(("сделай", "скриншот"), "hotkey", {"hotkey": ["shift", "print"]},
+                             ["Снимок экрана сделан, сэр", "Сохранено в папке Изображения, сэр", "Конечно, сэр",
+                              "Выполняю, сэр"],
+                             {})
+        self.__add_command__(("напиши",), "write", {"way": "simple"},
+                             ["Записываю, сэр", "Конечно, сэр", "Копирую и вставляю, сэр"],
+                             {"запиши": "напиши"})
+        self.__add_command__(("напечатай",), "write", {"way": "type"},
+                             ["Печатаю, сэр", "Пропечатываю символы, сэр"],
+                             {"напечатать": "напечатай"})
+
+        self.__add_command__(("удали", "слово"), "write_delete", {"part": "word"},
+                             ["Удалил, сэр", "Удаление завершено"],
+                             {"удалить": "удали"})
+
+        self.__add_command__(("удали", "последнее", "слово"), "write_delete", {"part": "word"},
+                             ["Удалил, сэр", "Удаление завершено"],
+                             {"словa": "слово"})
+
+        self.__add_command__(("удали", "текст"), "write_delete", {"part": "text"},
+                             ["Удалил, сэр", "Удаление завершено"],
+                             {"удалите": "удали"})
+
+        self.__add_command__(("удали", "весь", "текст"), "write_delete", {"part": "text"},
+                             ["Удалил, сэр", "Удаление завершено"],
+                             {"удалите": "удали"})
+
         self.__add_command__(("вниз",), "scroll", {"way": "down"}, ["Да, сэр", "Листаю, сэр"], {"низ": "вниз"})
         self.__add_command__(("вверх",), "scroll", {"way": "up"}, ["Да, сэр", "Листаю, сэр"], {"верх": "вверх"})
 
@@ -51,6 +80,27 @@ class Main(CommandPlugin):
     @staticmethod
     def browser_open(**kwargs):
         webbrowser.open("https://www.google.com/")
+
+    def write_delete(self, **kwargs):
+        if kwargs["parameters"]["part"] == "word":
+            pyautogui.hotkey("ctrl", "backspace")
+        elif kwargs["parameters"]["part"] == "text":
+            pyautogui.hotkey("ctrl", "a")
+            time.sleep(0.05)
+            pyautogui.press("backspace")
+    @staticmethod
+    def write(**kwargs):
+        to_write = " ".join(kwargs["command"][1:])
+        capslock_state = subprocess.check_output("xset q | awk '/LED/{ print $10 }' | grep -o '.$'", shell=True).decode("ascii")
+        capslock_on = True if capslock_state[0] == "3" else False
+        if kwargs["parameters"]["way"] == "type":
+            for block in to_write:
+                pyperclip.copy(block if not capslock_on else block.upper())
+                pyautogui.hotkey("ctrl", "v")
+                time.sleep(0.01)
+        else:
+            pyperclip.copy(to_write if not capslock_on else to_write.upper())
+            pyautogui.hotkey("ctrl", "v")
 
     def brightness(self, **kwargs):
         found = False
