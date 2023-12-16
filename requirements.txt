@@ -1,0 +1,13 @@
+PyAudio~=0.2.14
+vosk~=0.3.45
+pygame~=2.5.2
+torch~=2.1.1
+PyAutoGUI~=0.9.54
+num2words~=0.5.13
+translate~=3.6.1
+g4f~=0.1.9.3
+pyperclip~=1.8.2
+requests~=2.31.0
+screen_brightness_control~=0.22.1
+rich~=13.7.0
+psutil~=5.9.6

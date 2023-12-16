@@ -1,0 +1,8 @@
+{
+  "name": "Time",
+  "author": "ilyamiro",
+  "type": "command",
+  "path": "Plugin/Time",
+  "platfrom": "any",
+  "about": "Working with time related tasks, such as stopwatch/current time, etc."
+}

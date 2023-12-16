@@ -1,0 +1,8 @@
+{
+  "name": "Default",
+  "author": "ilyamiro",
+  "type": "command",
+  "path": "Plugin/Default",
+  "platfrom": "any",
+  "about": "Default commands"
+}

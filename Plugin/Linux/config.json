@@ -1,0 +1,8 @@
+{
+  "name": "Linux",
+  "author": "ilyamiro",
+  "type": "command",
+  "path": "Plugin/Linux",
+  "platfrom": "linux",
+  "about": "Adds main function's support for Linux-based systems"
+}
