@@ -55,11 +55,13 @@ For deployment, you have to install python 3.11.6 from <a href="https://www.pyth
   ```
   python3.11 -m pip install -r requirements.txt
   ```
-4. Launch gui.py using python: <br>
+4. Launch gui.py using python:<br>
 - Linux:
- 
+ ```
+cd GUI
 ```
-python3.11 GUI/console_gui.py
+```
+python3.11 console_gui.py
   ```
 - On Windows:
 ```

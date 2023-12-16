@@ -15,6 +15,8 @@ from rich.tree import Tree
 from rich.layout import Layout
 import psutil
 
+sys.path.append(os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
+sys.path.append(os.path.abspath(os.getcwd()))
 from Core.Core import Core
 from Command_System.CommandTree import CommandTree
 
@@ -103,7 +105,8 @@ Status: {"[green]Enabled[/]" if self.core.plugin_enable[plugin["name"]] else "[r
             args_print = self.create_plugin_stats(name)
             self.print(*args_print)
 
-            choice = self.input("Disable?" if self.core.plugin_enable[name] else "Enable?", choices=["y", "n"], default="", show_default=False)
+            choice = self.input("Disable?" if self.core.plugin_enable[name] else "Enable?", choices=["y", "n"],
+                                default="", show_default=False)
             match choice:
                 case "y":
                     if self.core.plugin_enable[name]:
@@ -116,6 +119,7 @@ Status: {"[green]Enabled[/]" if self.core.plugin_enable[plugin["name"]] else "[r
                     break
                 case _:
                     break
+
     def create_plugin_stats(self, name):
         plugin = None
         func_table = Table(title="Functionality", title_style=Style(bold=True, color="purple"), show_lines=True)
@@ -154,7 +158,6 @@ Status: {"[green]Enabled[/]" if self.core.plugin_enable[plugin["name"]] else "[r
 """
         ender += self.back
 
-
         return [to_print1, func_table, """
 [red][bold]COMMAND TREE[/][/]
         """, tree, ender]
@@ -189,7 +192,9 @@ Status: {"[green]Enabled[/]" if self.core.plugin_enable[plugin["name"]] else "[r
             self.update_plugins()
             self.clear()
             self.print(self.plugin_print)
-            choice = self.input(prompt="Choose plagin (number) to interact", choices=[str(number) for number in range(1, self.number_of_plugins + 1)], default="", show_default=False)
+            choice = self.input(prompt="Choose plagin (number) to interact",
+                                choices=[str(number) for number in range(1, self.number_of_plugins + 1)], default="",
+                                show_default=False)
             if choice:
                 self.plagin_handling(self.plugin_nums[int(choice)])
             elif not choice:
@@ -207,7 +212,8 @@ Status: {"[green]Enabled[/]" if self.core.plugin_enable[plugin["name"]] else "[r
                 case "4":
                     self.plugins()
                 case "5":
-                    choice = self.input("Are you sure you want to exit?", choices=["y", "n"], default="", show_default=False)
+                    choice = self.input("Are you sure you want to exit?", choices=["y", "n"], default="",
+                                        show_default=False)
                     if choice == "y":
                         self.clear()
                         self.print("[red]Exiting...[/]")
@@ -215,7 +221,6 @@ Status: {"[green]Enabled[/]" if self.core.plugin_enable[plugin["name"]] else "[r
 
                 case _:
                     pass
-
 
 
 if __name__ == "__main__":
