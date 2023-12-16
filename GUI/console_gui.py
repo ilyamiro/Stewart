@@ -15,7 +15,6 @@ from rich.tree import Tree
 from rich.layout import Layout
 import psutil
 
-sys.path.append(os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 from Core.Core import Core
 from Command_System.CommandTree import CommandTree
 
