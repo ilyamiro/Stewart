@@ -1,3 +1,3 @@
-from synthesis import tts
+from .synthesis import tts
 
 __all__ = ["tts"]
