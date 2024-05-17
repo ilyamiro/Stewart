@@ -1,0 +1,128 @@
+{
+  "commands": [
+    {
+      "command": ["открой", "проводник"],
+      "action": "subprocess",
+      "parameters": {"command": ["xdg-open", "/home/ilyamiro"]},
+      "responses": ["Системные файлы открыты, сэр", "Открыл, сэр"],
+      "synonyms": {"открыть": "открой", "файлы": "проводник"},
+      "equivalents": [["запусти", "проводник"]]
+    },
+    {
+      "command": ["открой", "документы"],
+      "action": "subprocess",
+      "parameters": {"command": ["xdg-open", "/home/ilyamiro/Документы"]},
+      "responses": ["Сделано, сэр", "Конечно, сэр", "Открыл документы, сэр", "Ваши документы, сэр"]
+    },
+    {
+      "command": ["открой", "изображения"],
+      "action": "subprocess",
+      "parameters": {"command": ["xdg-open", "/home/ilyamiro/Изображения"]},
+      "responses": ["Сделано, сэр", "Конечно, сэр", "Открыл папку изображений, сэр", "Ваши фото, сэр"],
+      "synonyms": {"изображение": "изображения"}
+    },
+    {
+      "command": ["открой", "папку", "с", "музыкой"],
+      "action": "subprocess",
+      "parameters": {"command": ["xdg-open", "/home/ilyamiro/Музыка"]},
+      "responses": ["Сделано, сэр", "Музыка, сэр"],
+      "synonyms": {},
+      "equivalents": [["открой", "папку", "музыки"]]
+    },
+    {
+      "command": ["открой", "загрузки"],
+      "action": "subprocess",
+      "parameters": {"command": ["xdg-open", "/home/ilyamiro/Загрузки"]},
+      "responses": ["Загруженные файлы, сэр", "Загрузки, сэр"],
+      "synonyms": {},
+      "equivalents": [["открой", "папку", "загрузок"]]
+    },
+    {
+      "command": ["открой", "видео", "файлы"],
+      "action": "subprocess",
+      "parameters": {"command": ["xdg-open", "/home/ilyamiro/Видео"]},
+      "responses": ["Видео файлы, сэр", "Открыл, сэр"],
+      "synonyms": {},
+      "equivalents": [["открой", "папку", "видео"], ["открой", "папку", "с", "видео"]]
+    },
+    {
+      "command": ["открой", "настройки"],
+      "action": "subprocess",
+      "parameters": {"command": ["gnome-control-center"]},
+      "responses": ["Видео файлы, сэр", "Открыл, сэр"],
+      "synonyms": {"параметры": "настройки"}
+    },
+    {
+      "command": ["открой", "блокнот"],
+      "action": "subprocess",
+      "parameters": {"command": ["gedit"]},
+      "responses": ["Открыл заметки, сэр, сэр", "Открыл, сэр"],
+      "synonyms": {"заметки": "блокнот"}
+    },
+    {
+      "command": ["закрой", "окно"],
+      "action": "hotkey",
+      "parameters": {"hotkey": ["alt", "f4"]},
+      "responses": ["Выполнил, сэр", "Закрыл, сэр"],
+      "synonyms": {"приложение": "окно"}
+    }
+  ],
+  "repeat": [
+    {
+      "command": ["открой"],
+      "action": "subprocess",
+      "links": {
+        "обсидиан": {
+          "command": ["/usr/bin/flatpak", "run", "--branch=stable", "--arch=x86_64", "--command=obsidian.sh",
+                     "--file-forwarding", "md.obsidian.Obsidian", "@@u", "%U", "@@", "/dev/null 2>&1"]
+        },
+        "телеграм": {
+          "command": ["/usr/bin/flatpak", "run", "--branch=stable", "--arch=x86_64", "--command=telegram-desktop",
+                     "--file-forwarding", "org.telegram.desktop", "@@u", "%u", "@@", "/dev/null 2>&1"]
+        },
+        "терминал": {
+          "command": ["kitty"]
+      },
+        "среду разработки": {
+          "command": ["bash", "/home/ilyamiro/Документы/pycharm-community-2023.2.3/bin/pycharm.sh"]
+        },
+        "запись экрана": {
+          "command": ["obs"]
+        }
+      }
+    },
+    {
+      "command": ["открой", "настройки"],
+      "action": "subprocess",
+      "links": {
+        "блютуз": {
+          "command": ["gnome-control-center", "bluetooth"]
+        },
+        "питания": {
+          "command": ["gnome-control-center", "power"]
+        },
+        "питание": {
+          "command": ["gnome-control-center", "power"]
+        },
+        "вай фай": {
+          "command": ["gnome-control-center", "wifi"]
+        },
+        "звука": {
+          "command": ["gnome-control-center", "sound"]
+        },
+        "клавиатуры": {
+          "command": ["gnome-control-center", "keyboard"]
+        },
+        "дисплея": {
+          "command": ["gnome-control-center", "display"]
+        },
+        "экрана": {
+          "command": ["gnome-control-center", "display"]
+        },
+        "системы": {
+          "command": ["gnome-control-center", "info-overview"]
+        }
+      }
+    }
+  ]
+}

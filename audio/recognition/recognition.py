@@ -37,7 +37,7 @@ class stt:
         if sys.platform == "linux":
             run("jack_control", "start")
 
-    def listen(self):
+    def listen(self, recognizer):
         """
         Generator for handling user input.
         Reads data from stream and uses recognizer to analyze the data
@@ -46,9 +46,9 @@ class stt:
         # Reading data from stream
         data = self.stream.read(4000, exception_on_overflow=False)
         # checking if data is valid
-        if self.recognizer.AcceptWaveform(data) and len(data) > 1 and self.stream.is_active():
+        if recognizer.AcceptWaveform(data) and len(data) > 1 and self.stream.is_active():
             # using json to load results of user input's analyzing
-            answer = json.loads(self.recognizer.Result())
+            answer = json.loads(recognizer.Result())
             # if user said something - it yields
             if answer['text']:
                 yield answer['text']
