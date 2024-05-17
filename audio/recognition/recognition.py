@@ -21,6 +21,8 @@ class stt:
         self.model = Model(f"{CWD}/vosk-models/vosk-model-small-ru-0.22")
         self.recognizer = KaldiRecognizer(self.model, 16000)
 
+        self.current = self.recognizer
+
         p = pyaudio.PyAudio()
         self.stream = p.open(16000, 1, pyaudio.paInt16, True, frames_per_buffer=8000)
 
@@ -37,7 +39,7 @@ class stt:
         if sys.platform == "linux":
             run("jack_control", "start")
 
-    def listen(self, recognizer):
+    def listen(self):
         """
         Generator for handling user input.
         Reads data from stream and uses recognizer to analyze the data
@@ -46,9 +48,9 @@ class stt:
         # Reading data from stream
         data = self.stream.read(4000, exception_on_overflow=False)
         # checking if data is valid
-        if recognizer.AcceptWaveform(data) and len(data) > 1 and self.stream.is_active():
+        if self.current.AcceptWaveform(data) and len(data) > 1 and self.stream.is_active():
             # using json to load results of user input's analyzing
-            answer = json.loads(recognizer.Result())
+            answer = json.loads(self.current.Result())
             # if user said something - it yields
             if answer['text']:
                 yield answer['text']

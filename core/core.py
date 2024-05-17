@@ -4,6 +4,7 @@ import os
 import threading
 import subprocess
 import sys
+import time
 
 from audio import tts as TTS
 from audio import stt as STT
@@ -41,12 +42,10 @@ class Core:
         self.tts = TTS()
         self.stt = STT()
 
-        self.recognition_restricted = True
-
         self._create_grammar_recognition()
         self.stt_grammar = self.stt.grammar_recognition(GRAMMAR_FILE)
 
-
+        self.stt.current = self.stt_grammar
 
     def _load_commands(self):
         with open(f"{CWD}/data/commands.json", "r", encoding="utf-8") as file:
@@ -73,7 +72,7 @@ class Core:
                     self._add_command(
                         (*repeat.get("command"), key),
                         repeat.get("action"),
-                        repeat.get("links").get(key),
+                        {repeat.get("parameter"): repeat.get("links").get(key)},
                         self.answers.get("confirmative")
                     )
 
@@ -92,19 +91,17 @@ class Core:
             run("xhost", "+local:$USER")
 
     def start(self):
-        self.recognition_thread = threading.Thread(target=self._control_recognition)
+        self.recognition_thread = threading.Thread(target=self.recognition)
         self.recognition_thread.start()
 
-    def _control_recognition(self):
-        while self.recognition_restricted:
-            self.recognition(self.stt_grammar)
-
-    def recognition(self, recognizer):
-        for word in self.stt.listen(recognizer):
-            print(word)
-            result = self._remove_trigger_word(word)
-            if result != "blank":
-                self.handle(result)
+    def recognition(self):
+        # if condition is True, while cycle goes without not, if False - with not,
+        while True:
+            for word in self.stt.listen():
+                print(word)
+                result = self._remove_trigger_word(word)
+                if result != "blank":
+                    self.handle(result)
 
     def _add_command(self, command: tuple, handler: str, parameters: dict = None, synthesize: list = None,
                      synonyms: dict = None, equivalents: list = None):
@@ -232,6 +229,10 @@ class Core:
     def webbrowser(**kwargs):
         webbrowser.open(kwargs["parameters"]["url"])
 
+    def switch_recognizer(self, **kwargs):
+        restricted = kwargs.get("parameters").get("restricted")
+        self.stt.current = self.stt_grammar if restricted else self.stt.recognizer
+
     def answer_gpt(self, query):
         answer = g4f.ChatCompletion.create(
             messages=[*self.gpt_start, *self.gpt_history, {"role": "user", "content": query}],
@@ -246,4 +247,3 @@ class Core:
 
         answer = numbers_to_strings(answer)
         return answer
-

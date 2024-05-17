@@ -65,63 +65,98 @@
       "parameters": {"hotkey": ["alt", "f4"]},
       "responses": ["Выполнил, сэр", "Закрыл, сэр"],
       "synonyms": {"приложение": "окно"}
+    },
+    {
+      "command": ["сверни", "окно"],
+      "action": "hotkey",
+      "parameters": {"hotkey": ["alt", "h"]},
+      "responses": ["Выполнил, сэр", "Свернул, сэр"],
+      "synonyms": {}
+    },
+    {
+      "command": ["сверни", "все", "окна"],
+      "action": "hotkey",
+      "parameters": {"hotkey": ["win", "d"]},
+      "responses": ["Выполнил, сэр", "Свернул, сэр"],
+      "synonyms": {"окно": "окна"}
+    },
+    {
+      "command": ["включи", "свободный", "режим"],
+      "action": "switch_recognizer",
+      "parameters": {"restricted": false},
+      "responses": ["Вы свободны говорить, сэр", "Свободный режим активирован, сэр"],
+      "synonyms": {}
+    },
+    {
+      "command": ["выключи", "свободный", "режим"],
+      "action": "switch_recognizer",
+      "parameters": {"restricted": true},
+      "responses": ["Включил ограничения, сэр", "Свободный режим отключен, сэр"],
+      "synonyms": {"отключи": "выключи", "свободной": "свободный", "режиме": "режим", "свободная": "свободный"}
     }
   ],
   "repeat": [
     {
       "command": ["открой"],
       "action": "subprocess",
+      "parameter": "command",
       "links": {
-        "обсидиан": {
-          "command": ["/usr/bin/flatpak", "run", "--branch=stable", "--arch=x86_64", "--command=obsidian.sh",
-                     "--file-forwarding", "md.obsidian.Obsidian", "@@u", "%U", "@@", "/dev/null 2>&1"]
-        },
-        "телеграм": {
-          "command": ["/usr/bin/flatpak", "run", "--branch=stable", "--arch=x86_64", "--command=telegram-desktop",
-                     "--file-forwarding", "org.telegram.desktop", "@@u", "%u", "@@", "/dev/null 2>&1"]
-        },
-        "терминал": {
-          "command": ["kitty"]
-      },
-        "среду разработки": {
-          "command": ["bash", "/home/ilyamiro/Документы/pycharm-community-2023.2.3/bin/pycharm.sh"]
-        },
-        "запись экрана": {
-          "command": ["obs"]
-        }
+        "обсидиан": ["/usr/bin/flatpak", "run", "--branch=stable", "--arch=x86_64", "--command=obsidian.sh", "--file-forwarding", "md.obsidian.Obsidian", "@@u", "%U", "@@", "/dev/null 2>&1"],
+        "телеграм": ["/usr/bin/flatpak", "run", "--branch=stable", "--arch=x86_64", "--command=telegram-desktop", "--file-forwarding", "org.telegram.desktop", "@@u", "%u", "@@", "/dev/null 2>&1"],
+        "терминал": ["kitty"],
+        "среду разработки": ["bash", "/home/ilyamiro/Документы/pycharm-community-2023.2.3/bin/pycharm.sh"],
+        "запись экрана": ["obs"],
+        "игры": ["steam"],
+        "ворд": ["libreoffice", "--writer"],
+        "простое сообщество": ["/usr/bin/flatpak", "run", "--branch=stable", "--arch=x86_64", "--command=com.discordapp.Discord", "com.discordapp.Discord", "/dev/null 2>&1"],
+        "центр приложений": ["gnome-software"],
+        "браузер": ["xdg-open", "https://"]
+      }
+    },
+    {
+      "command": ["закрой"],
+      "action": "subprocess",
+      "parameter": "command",
+      "links": {
+        "обсидиан": ["sudo", "killall", "obsidian"],
+        "телеграм": ["sudo", "killall", "telegram-desktop"],
+        "терминал": ["sudo", "killall", "kitty"],
+        "запись экрана": ["sudo", "killall", " obs"],
+        "игры": ["sudo", "killall", "steam"],
+        "простое сообщество": ["sudo", "killall", "Discord"],
+        "центр приложений": ["sudo","killall","gnome-software"]
       }
     },
     {
       "command": ["открой", "настройки"],
       "action": "subprocess",
+      "parameter": "command",
       "links": {
-        "блютуз": {
-          "command": ["gnome-control-center", "bluetooth"]
-        },
-        "питания": {
-          "command": ["gnome-control-center", "power"]
-        },
-        "питание": {
-          "command": ["gnome-control-center", "power"]
-        },
-        "вай фай": {
-          "command": ["gnome-control-center", "wifi"]
-        },
-        "звука": {
-          "command": ["gnome-control-center", "sound"]
-        },
-        "клавиатуры": {
-          "command": ["gnome-control-center", "keyboard"]
-        },
-        "дисплея": {
-          "command": ["gnome-control-center", "display"]
-        },
-        "экрана": {
-          "command": ["gnome-control-center", "display"]
-        },
-        "системы": {
-          "command": ["gnome-control-center", "info-overview"]
-        }
+        "блютуз": ["gnome-control-center", "bluetooth"],
+        "питания": ["gnome-control-center", "power"],
+        "питание": ["gnome-control-center", "power"],
+        "вай фай": ["gnome-control-center", "wifi"],
+        "звука": ["gnome-control-center", "sound"],
+        "клавиатуры": ["gnome-control-center", "keyboard"],
+        "дисплея": ["gnome-control-center", "display"],
+        "экрана": ["gnome-control-center", "display"],
+        "системы": ["gnome-control-center", "info-overview"]
+      }
+    },
+    {
+      "command": ["открой"],
+      "action": "webbrowser",
+      "parameter": "command",
+      "links": {
+        "блютуз": ["gnome-control-center", "bluetooth"],
+        "питания": ["gnome-control-center", "power"],
+        "питание": ["gnome-control-center", "power"],
+        "вай фай": ["gnome-control-center", "wifi"],
+        "звука": ["gnome-control-center", "sound"],
+        "клавиатуры": ["gnome-control-center", "keyboard"],
+        "дисплея": ["gnome-control-center", "display"],
+        "экрана": ["gnome-control-center", "display"],
+        "системы": ["gnome-control-center", "info-overview"]
       }
     }
   ]
