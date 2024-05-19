@@ -93,6 +93,93 @@
       "parameters": {"restricted": true},
       "responses": ["Включил ограничения, сэр", "Свободный режим отключен, сэр"],
       "synonyms": {"отключи": "выключи", "свободной": "свободный", "режиме": "режим", "свободная": "свободный"}
+    },
+    {
+      "command": ["сверни", "все", "окна"],
+      "action": "hotkey",
+      "parameters": {"hotkey": ["win", "d"]},
+      "responses": ["Выполнил, сэр", "Свернул, сэр"],
+      "synonyms": {"окно": "окна"}
+    },
+    {
+      "command": ["закрой", "вкладку"],
+      "action": "hotkey",
+      "parameters": {"hotkey": ["ctrl", "w"]},
+      "responses": ["Закрыл вкладку, сэр", "Закрыл, сэр"],
+      "synonyms": {}
+    },
+    {
+      "command": ["открой", "вкладку"],
+      "action": "hotkey",
+      "parameters": {"hotkey": ["ctrl", "t"]},
+      "responses": ["Открыл, сэр", "Открыл вкладку, сэр"],
+      "synonyms": {},
+      "equivalents": [["открой", "новую", "вкладку"]]
+    },
+    {
+      "command": ["включи", "прокси"],
+      "action": "subprocess",
+      "parameters": {"command": ["sudo", "openvpn", "--config", "/home/ilyamiro/Загрузки/vpnbook-openvpn-de20/vpnbook-de20-tcp80.ovpn"]},
+      "responses": ["Подключаюсь к серверам, сэр", "Налаживаю соединение, сэр",  "Обновляю прокси протокол, сэр", "Анализирую сеть и подключаюсь, сэр"],
+      "synonyms": {"подключи": "включи"}
+    },
+    {
+      "command": ["выключи", "прокси"],
+      "action": "subprocess",
+      "parameters": {"command": ["sudo", "killall", "openvpn"]},
+      "responses": ["Отключаюсь, сэр", "Прокси отключен, сэр"],
+      "synonyms": {"отключи": "выключи"}
+    },
+    {
+      "command": ["открой", "историю", "браузера"],
+      "action": "hotkey",
+      "parameters": {"hotkey": ["ctrl", "shift", "h"]},
+      "responses": ["Открыл историю браузера, сэр", "Открыл, сэр"],
+      "synonyms": {}
+    },
+    {
+      "command": ["открой", "загрузки", "браузера"],
+      "action": "hotkey",
+      "parameters": {"hotkey": ["ctrl", "shift", "y"]},
+      "responses": ["Открыл, сэр", "Открыл загрузки браузера, сэр"],
+      "synonyms": {}
+    },
+    {
+      "command": ["найди"],
+      "action": "find",
+      "parameters": {},
+      "responses": [],
+      "synonyms": {"найти":"найди"}
+    },
+    {
+      "command": ["найди", "видео"],
+      "action": "find_video",
+      "parameters": {},
+      "responses": []
+    },
+    {
+      "command": ["найди", "страницу"],
+      "action": "find",
+      "parameters": {},
+      "responses": [],
+      "synonyms": {"сайт":"страницу", "страница": "страницу"}
+    },
+    {
+      "command": ["обнови", "страницу"],
+      "action": "hotkey",
+      "parameters": {"hotkey": ["ctrl", "r"]},
+      "responses": ["Обновил страницу, сэр", "Сделано, сэр"],
+      "synonyms": {}
+    },
+    {
+      "command": ["повтори", "страницу"],
+      "action": "repeat",
+      "parameters": {},
+      "responses": [],
+      "synonyms": {}
+    },
+    {
+
     }
   ],
   "repeat": [
@@ -124,8 +211,10 @@
         "запись экрана": ["sudo", "killall", " obs"],
         "игры": ["sudo", "killall", "steam"],
         "простое сообщество": ["sudo", "killall", "Discord"],
-        "центр приложений": ["sudo","killall","gnome-software"]
-      }
+        "центр приложений": ["sudo","killall","gnome-software"],
+        "прокси": ["sudo", "killall", "openvpn"]
+      },
+      "synonyms": {"выключи": "закрой"}
     },
     {
       "command": ["открой", "настройки"],
@@ -140,24 +229,31 @@
         "клавиатуры": ["gnome-control-center", "keyboard"],
         "дисплея": ["gnome-control-center", "display"],
         "экрана": ["gnome-control-center", "display"],
-        "системы": ["gnome-control-center", "info-overview"]
-      }
+        "системы": ["gnome-control-center", "system"],
+        "мышки": ["gnome-control-center", "mouse"]
+      },
+      "synonyms": {"мыши": "мышки"}
     },
     {
       "command": ["открой"],
       "action": "webbrowser",
-      "parameter": "command",
+      "parameter": "url",
       "links": {
-        "блютуз": ["gnome-control-center", "bluetooth"],
-        "питания": ["gnome-control-center", "power"],
-        "питание": ["gnome-control-center", "power"],
-        "вай фай": ["gnome-control-center", "wifi"],
-        "звука": ["gnome-control-center", "sound"],
-        "клавиатуры": ["gnome-control-center", "keyboard"],
-        "дисплея": ["gnome-control-center", "display"],
-        "экрана": ["gnome-control-center", "display"],
-        "системы": ["gnome-control-center", "info-overview"]
-      }
+        "гугл": "https://www.google.com",
+        "яндекс": "https://www.yandex.ru",
+        "вконтакте": "https://vk.com",
+        "одноклассники": "https://www.ok.ru",
+        "фейсбук": "https://www.facebook.com",
+        "инстаграм": "https://www.instagram.com",
+        "твиттер": "https://twitter.com",
+        "ютуб": "https://www.youtube.com",
+        "вайбер": "https://www.viber.com",
+        "ватсап": "https://www.whatsapp.com",
+        "сайт телеграм": "https://telegram.org",
+        "телеграм сайт": "https://telegram.org",
+        "почту": "https://gmail.com"
+        },
+      "synonyms": {"ютюб": "ютуб"}
     }
   ]
 }

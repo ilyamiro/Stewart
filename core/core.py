@@ -4,12 +4,14 @@ import os
 import threading
 import subprocess
 import sys
+import webbrowser
 import time
 
 from audio import tts as TTS
 from audio import stt as STT
 
 from utils.sys import config_load, run
+from utils.text import *
 from .data import Tree
 
 import g4f
@@ -73,7 +75,8 @@ class Core:
                         (*repeat.get("command"), key),
                         repeat.get("action"),
                         {repeat.get("parameter"): repeat.get("links").get(key)},
-                        self.answers.get("confirmative")
+                        self.answers.get("confirmative"),
+                        repeat.get("synonyms"),
                     )
 
     def _create_grammar_recognition(self):
@@ -143,7 +146,7 @@ class Core:
                     res.extend([total[0], request])
                     self._synth_handle(res)
             elif len(total) > 1:
-                self.tts.say(random.choice(self.answers.get("default")))
+                self.tts.say(random.choice(self.answers.get("confirmative")))
                 for command in total:
                     result = self.tree.find_command(command)
                     if result:
@@ -211,13 +214,6 @@ class Core:
         )
 
     @staticmethod
-    def popen():
-        subprocess.Popen(
-            kwargs["parameters"]["command"],
-            shell=True
-        )
-
-    @staticmethod
     def hotkey(**kwargs):
         pyautogui.hotkey(*kwargs["parameters"]["hotkey"])
 
@@ -247,3 +243,184 @@ class Core:
 
         answer = numbers_to_strings(answer)
         return answer
+
+    @staticmethod
+    def tell_time(**kwargs):
+        hour = datetime.datetime.now().hour
+        minute = datetime.datetime.now().minute
+        say(f"Сейчас {num2words(hour, lang='ru')} час+{get_hour_suffix(hour)} и {num2words(minute, gender='f', lang='ru')} минут{get_minute_suffix(minute)}")
+
+    @staticmethod
+    def click(**kwargs):
+        num = find_num_in_list(kwargs["command"])
+        if num:
+            pyautogui.click(clicks=num)
+        else:
+            pyautogui.click()
+
+    @staticmethod
+    def volume(**kwargs):
+        num = find_num_in_list(kwargs["command"])
+        current = os.popen('amixer get Master | grep -oP "\[\d+%\]"').read()
+        current = int(current.split()[0][1:-2])
+        if num:
+            if kwargs["parameters"]["command"] == "set":
+                os.system(f"amixer set 'Master' {num}% /dev/null 2>&1")
+            else:
+                os.system(
+                    f"amixer set 'Master' {current + num if kwargs['parameters']['command'] == 'up' else current - num}% > /dev/null 2>&1")
+        else:
+            os.system(
+                f'amixer set "Master" {current + 25 if kwargs["parameters"]["command"] == "up" else current - 25}% > /dev/null 2>&1')
+
+    @staticmethod
+    def power_off(**kwargs):
+        if kwargs["parameters"]["way"] == "off":
+            num = find_num_in_list(kwargs["command"])
+            if num:
+                say(f"Выключение компьютера произойдет через {num2words(num, lang='ru')} минут{get_minute_suffix(num)}, сэр")
+                os.system(f'shutdown -h +{num} /dev/null 2>&1')
+            else:
+                msg = "Выключение компьютера произойдет через одну минуту, сэр"
+                os.system(f'sudo shutdown -h +1 /dev/null 2>&1')
+                say(msg)
+        elif kwargs["parameters"]["way"] == "now":
+            thread = threading.Timer(2.5, os.system, args=["sudo shutdown now"])
+            thread.start()
+        else:
+            say("Выключение компьютера отменено")
+            os.system("sudo shutdown -c /dev/null 2>&1")
+
+    @staticmethod
+    def power_reload(**kwargs):
+        if kwargs["parameters"]["way"] == "off":
+            num = find_num_in_list(kwargs["command"])
+            if num:
+                say(f"Перезагрузка компьютера произойдет через {num2words(num, lang='ru')} минут{get_minute_suffix(num)}, сэр")
+                os.system(f'shutdown -r -h +{num} /dev/null 2>&1')
+            else:
+                msg = "Перезагрузка компьютера произойдет через одну минуту, сэр"
+                os.system(f'sudo shutdown -r -h +1 /dev/null 2>&1')
+                say(msg)
+        elif kwargs["parameters"]["way"] == "now":
+            thread = threading.Timer(2.5, os.system, args=["sudo shutdown -r now"])
+            thread.start()
+        else:
+            say("Перезагрузка компьютера отменена")
+            os.system("sudo shutdown -c /dev/null 2>&1")
+
+    @staticmethod
+    def capslock(**kwargs):
+        if get_capslock_state():
+            say("Капслок уже включен, сэр")
+        else:
+            say("Выполнил, сэр")
+            pyautogui.press("capslock")
+
+    def repeat(self, **kwargs):
+        self.handle(self.history[-2])
+
+    @staticmethod
+    def find_link(**kwargs):
+        search = "+".join(kwargs["command"][2:])
+
+        url = "https://html.duckduckgo.com/html/?"
+        params = {'q': search}
+
+        say(f"Вот, что мне удалось найти по запросу {search}")
+
+        def fetch_first_link(a, symbol):
+            params['q'] = params['q'].format(symbol)
+            res = a.get(url, params=params)
+            soup = BeautifulSoup(res.text, "lxml")
+            return soup.select_one(".result__title > a.result__a").get("href")
+
+        with requests.Session() as s:
+            s.headers[
+                'User-Agent'] = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+            webbrowser.open(fetch_first_link(s, 'reliance'))
+
+    @staticmethod
+    def find_info(**kwargs):
+        self.tts.say("Ищу источники информации, сэр")
+        search = "+".join(kwargs["command"][2:])
+
+        url = "https://html.duckduckgo.com/html/?"
+        params = {'q': search}
+
+        def fetch_first_link(a, symbol):
+            params['q'] = params['q'].format(symbol)
+            res = a.get(url, params=params)
+            soup = BeautifulSoup(res.text, "lxml")
+            # return soup.select_one(".result__title > a.result__a").get("href")
+            found = soup.select(".result__title > a.result__a", limit=5)
+            return found[0]
+
+        with requests.Session() as s:
+            s.headers[
+                'User-Agent'] = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+            link = str(fetch_first_link(s, 'reliance').get("href"))
+            subprocess.run(["node", f"{CWD}/data/scripts/node.js", link])
+
+            with open("text.txt", "r", encoding="utf-8") as file:
+                self.tts.say("Нашел источник, анализирую")
+                answer = g4f.ChatCompletion.create(
+                    messages=[{"role": "user",
+                               "content": f"Коротко просуммируй все сказанное далее: {file.read().split()[:90]}"}],
+                    provider=g4f.Provider.You,
+                    stream=False,
+                    model=g4f.models.default
+                )
+                say(numbers_to_strings(answer))
+
+    @staticmethod
+    def find_video(**kwargs):
+        search = "+".join(kwargs["command"][2:])
+        html = urllib.request.urlopen(f"https://www.youtube.com/results?search_query={quote(search)}")
+        video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
+        if video_ids:
+            webbrowser.open("https://www.youtube.com/watch?v=" + video_ids[0], autoraise=True)
+        else:
+            self.tts.say("Я не смог найти подходящее видео, или произошла ошибка, сэр")
+
+    @staticmethod
+    def find(**kwargs):
+        to_find = " ".join(kwargs["command"][1:])
+
+        def _find(query, site):
+            self.tts.say("Вот что мне удалось найти по запросу" + to_find)
+            webbrowser.open(site + query, autoraise=True)
+
+        def remove_word(word, text):
+            for _ in text.split():
+                if word in _:
+                    return text.replace(_, "")
+
+        if "яндекс" in to_find:
+            to_find = remove_word("яндекс", to_find)
+            _find(to_find, "https://yandex.ru/search/?text=")
+        elif "ютуб" in to_find:
+            to_find = remove_word("ютуб", to_find)
+            _find(to_find, "https://www.youtube.com/results?search_query=")
+        else:
+            _find(to_find, "https://duckduckgo.com/?q=")
+
+    @staticmethod
+    def scroll(**kwargs):
+        match kwargs["parameters"]["way"]:
+            case "up":
+                pyautogui.scroll(clicks=5)
+            case "down":
+                pyautogui.scroll(clicks=-5)
+
+    @staticmethod
+    def say_same(**kwargs):
+        self.tts.say(" ".join(kwargs["command"][1:]))
+
+    @staticmethod
+    def random_number(**kwargs):
+        num = find_num_in_list(kwargs["command"])
+        if isinstance(num, tuple):
+            self.tts.say(num2words(random.randint(min(num), max(num)), lang='ru') + ", сэр")
+        else:
+            self.tts.say("Назовите два числ+а, сэр")
