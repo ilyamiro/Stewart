@@ -78,7 +78,7 @@
       "action": "hotkey",
       "parameters": {"hotkey": ["win", "d"]},
       "responses": ["Выполнил, сэр", "Свернул, сэр"],
-      "synonyms": {"окно": "окна"}
+      "synonyms": {}
     },
     {
       "command": ["включи", "свободный", "режим"],
@@ -99,7 +99,7 @@
       "action": "hotkey",
       "parameters": {"hotkey": ["win", "d"]},
       "responses": ["Выполнил, сэр", "Свернул, сэр"],
-      "synonyms": {"окно": "окна"}
+      "synonyms": {}
     },
     {
       "command": ["закрой", "вкладку"],
@@ -159,7 +159,14 @@
     },
     {
       "command": ["найди", "страницу"],
-      "action": "find",
+      "action": "find_link",
+      "parameters": {},
+      "responses": [],
+      "synonyms": {"сайт":"страницу", "страница": "страницу"}
+    },
+    {
+      "command": ["найди", "информацию"],
+      "action": "find_info",
       "parameters": {},
       "responses": [],
       "synonyms": {"сайт":"страницу", "страница": "страницу"}
@@ -172,15 +179,421 @@
       "synonyms": {}
     },
     {
-      "command": ["повтори", "страницу"],
+      "command": ["повтори"],
       "action": "repeat",
       "parameters": {},
       "responses": [],
       "synonyms": {}
     },
     {
+      "command": ["страница", "вниз"],
+      "action": "scroll",
+      "parameters": {"way": "down"},
+      "responses": ["Опустил, сэр"],
+      "synonyms": {}
+    },
+    {
+      "command": ["страница", "вверх"],
+      "action": "scroll",
+      "parameters": {"way": "upz"},
+      "responses": ["Опустил, сэр"],
+      "synonyms": {"верх": "вверх", "сайт": "страница"}
+    },
+    {
+      "command": ["скажи"],
+      "action": "say same",
+      "parameters": {},
+      "responses": [],
+      "synonyms": {}
+    },
+    {
+    "command": ["открой", "приватный", "браузер"],
+    "action": "subprocess",
+    "parameters": {"command": ["firefox", "--private-window"]},
+    "responses": ["Открываю браузер, сэр", "Браузер готов, сэр", "Открываю, сэр", "Конечно, сэр"]
+    },
+     {
+    "command": ["увеличь", "громкость"],
+    "action": "volume",
+    "parameters": {"command": "up"},
+    "responses": ["Есть, сэр", "Конечно, сэр", "Сию минуту", "Выполняю, сэр"],
+    "synonyms": {"увеличь": "прибавь"}
+  },
+  {
+    "command": ["сделай", "громче"],
+    "action": "volume",
+    "parameters": {"command": "up"},
+    "responses": ["Есть, сэр", "Конечно, сэр", "Сию минуту", "Выполняю, сэр"],
+    "synonyms": {"увеличь": "прибавь"}
+  },
+  {
+    "command": ["уменьши", "громкость"],
+    "action": "volume",
+    "parameters": {"command": "down"},
+    "responses": ["Есть, сэр", "Конечно, сэр", "Сию минуту", "Выполняю, сэр"],
+    "synonyms": {"уменьши": "понизь"}
+  },
 
-    }
+  {
+    "command": ["сделай", "тише"],
+    "action": "volume",
+    "parameters": {"command": "down"},
+    "responses": ["Есть, сэр", "Конечно, сэр", "Сию минуту", "Выполняю, сэр"],
+    "synonyms": {"уменьши": "понизь"}
+  },
+  {
+    "command": ["поставь", "громкость"],
+    "action": "volume",
+    "parameters": {"command": "set"},
+    "responses": ["Конечно, сэр", "Сию минуту, сэр"],
+    "synonyms": {}
+  },
+  {
+    "command": ["курсор", "вправо"],
+    "action": "move",
+    "parameters": {"way": "right"},
+    "responses": ["Есть, сэр", "Конечно, сэр", "Переместил, сэр"],
+    "synonyms": {"право": "вправо", "лево": "влево"},
+    "equivalents": [["курсор", "в", "право"]]
+  },
+
+  {
+    "command": ["курсор", "вверх"],
+    "action": "move",
+    "parameters": {"way": "up"},
+    "responses": ["Есть, сэр", "Конечно, сэр", "Переместил, сэр"],
+    "equivalents": [["курсор", "в", "верх"]]
+  },
+
+  {
+    "command": ["курсор", "вниз"],
+    "action": "move",
+    "parameters": {"way": "down"},
+    "responses": ["Есть, сэр", "Конечно, сэр", "Переместил, сэр"],
+    "equivalents": [["курсор", "в", "низ"]]
+  },
+
+  {
+    "command": ["курсор", "влево"],
+    "action": "move",
+    "parameters": {"way": "left"},
+    "responses": ["Есть, сэр", "Конечно, сэр", "Переместил, сэр"],
+    "equivalents": [["курсор", "в", "лево"]]
+  },
+  {
+    "command": ["выключи", "компьютер"],
+    "action": "power_off",
+    "parameters": {"way": "off"},
+    "responses": [],
+    "synonyms": {"систему": "компьютер", "ноутбук": "компьютер"}
+  },
+  {
+    "command": ["выключи", "компьютер", "сейчас"],
+    "action": "power_off",
+    "parameters": {"way": "now"},
+    "responses": ["Было честью служить вам, сэр. Надеюсь, вы обо мне не забудете!", "До встречи, сэр!"],
+    "synonyms": {"немедленно": "сейчас"}
+  },
+  {
+    "command": ["перезагрузи", "компьютер", "сейчас"],
+    "action": "power_reload",
+    "parameters": {"way": "now"},
+    "responses": ["Было честью служить вам, сэр. Надеюсь, вы обо мне не забудете!", "До встречи, сэр!"],
+    "synonyms": {}
+  },
+  {
+    "command": ["перезагрузи", "компьютер"],
+    "action": "power_reload",
+    "parameters": {"way": "off"},
+    "responses": ["Перезагружаю систему, сэр", "Конечно, сэр"],
+    "synonyms": {}
+  },
+
+  {
+    "command": ["нажми", "капс"],
+    "action": "key",
+    "parameters": {"key": "capslock"},
+    "responses": ["Нажал, сэр", "Есть, сэр"],
+    "equivalents": []
+  },
+
+  {
+    "command": ["включи", "капс"],
+    "action": "capslock",
+    "parameters": {},
+    "responses": [],
+    "equivalents": []
+  },
+
+  {
+    "command": ["отключи", "питание"],
+    "action": "end",
+    "parameters": {},
+    "responses": ["Было честью служить вам, сэр", "Отключаюсь, сэр"],
+    "equivalents": [["отключить", "питание"], ["отключить", "питанию"]]
+  },
+
+  {
+    "command": ["выключи", "нейросеть"],
+    "action": "neuro_switch",
+    "parameters": {"way": "off"},
+    "responses": ["Нейросеть отключена", "Искуственный интеллект отключен"],
+    "equivalents": [["отключи", "нейросеть"]]
+  },
+
+  {
+    "command": ["включи", "нейросеть"],
+    "action": "neuro_switch",
+    "parameters": {"way": "on"},
+    "responses": ["Нейросеть подключена", "Нейросеть теперь активна, сэр"],
+    "equivalents": [["подключи", "нейросеть"]]
+  },
+
+  {
+    "command": ["включи", "субтитры"],
+    "action": "key",
+    "parameters": {"key": "c"},
+    "responses": ["Конечно, сэр", "Включил субтитры, сэр", "Сделано, сэр"],
+    "equivalents": []
+  },
+
+  {
+    "command": ["следующее", "видео"],
+    "action": "hotkey",
+    "parameters": {"hotkey": ["shift", "n"]},
+    "responses": ["Конечно, сэр", "Переключил, сэр", "Выполнил, сэр"],
+    "equivalents": []
+  },
+
+  {
+    "command": ["предыдущее", "видео"],
+    "action": "hotkey",
+    "parameters": {"hotkey": ["left"]},
+    "responses": ["Конечно, сэр", "Переключил на предыдущее видео, сэр", "Готово, сэр"],
+    "equivalents": []
+  },
+
+  {
+    "command": ["начало", "видео"],
+    "action": "key",
+    "parameters": {"key": ["home"]},
+    "responses": ["Конечно, сэр", "Перешел на начало видео, сэр", "Сделано, сэр"],
+    "equivalents": [["начала", "видео"], ["началу", "видео"]]
+  },
+
+  {
+    "command": ["конец", "видео"],
+    "action": "key",
+    "parameters": {"key": ["end"]},
+    "responses": ["Конечно, сэр", "Перешел на конец видео, сэр", "Сделано, сэр", "Перемотал, сэр"],
+    "equivalents": []
+  },
+  {
+    "command": ["пауза"],
+    "action": "key",
+    "parameters": {"key": "space"},
+    "responses": ["Нажал, сэр", "Поставил на паузу, сэр", "Конечно, сэр"],
+    "equivalents": []
+  },
+  {
+  "command": ["скопируй"],
+  "action": "hotkey",
+  "parameters": {"hotkey": ["ctrl", "c"]},
+  "responses": ["Есть, сэр", "Сделано, сэр", "Скопировал, сэр"]
+  },
+
+  {
+    "command": ["выдели", "все"],
+    "action": "hotkey",
+    "parameters": {"hotkey": ["ctrl", "a"]},
+    "responses": ["Есть, сэр", "Сделано, сэр", "Выделил, сэр"]
+  },
+
+  {
+    "command": ["вырежи"],
+    "action": "hotkey",
+    "parameters": {"hotkey": ["ctrl", "x"]},
+    "responses": ["Есть, сэр", "Сделано, сэр", "Вырезал, сэр"]
+  },
+
+  {
+    "command": ["вырежи", "все"],
+    "action": "combination",
+    "parameters": {
+      "combination": [
+        {"name": "hotkey", "parameters": {"hotkey": ["ctrl", "a"]}},
+        {"name": "hotkey", "parameters": {"hotkey": ["ctrl", "x"]}}
+      ]
+    },
+    "responses": ["Есть, сэр", "Сделано, сэр", "Вырезал, сэр"]
+  },
+  {
+    "command": ["скопируй", "все"],
+    "action": "combination",
+    "parameters": {
+      "combination": [
+        {"name": "hotkey", "parameters": {"hotkey": ["ctrl", "a"]}},
+        {"name": "hotkey", "parameters": {"hotkey": ["ctrl", "c"]}}
+      ]
+    },
+    "responses": ["Есть, сэр", "Сделано, сэр", "Вырезал, сэр"]
+  },
+  {
+  "command": ["напиши"],
+  "action": "write",
+  "parameters": {},
+  "responses": ["Записываю, сэр", "Записал", "Конечно, сэр"],
+  "equivalents": [["запиши"]]
+  },
+
+{
+  "command": ["удали", "слово"],
+  "action": "delete_text",
+  "parameters": {"way": "one"},
+  "responses": ["Удалил слово, сэр", "Выполнено, сэр"],
+  "equivalents": [["удалить", "слово"], ["слова", "слово"]],
+  "related_commands": [["удали", "последнее", "слово"]]
+},
+
+{
+  "command": ["удали", "текст"],
+  "action": "delete_text",
+  "parameters": {"way": "all"},
+  "responses": ["Удалил весь текст, сэр", "Выполнено, сэр", "Удаление завершено"],
+  "equivalents": [["удали", "весь", "текст"]]
+},
+
+{
+  "command": ["нажми"],
+  "action": "click",
+  "parameters": {},
+  "responses": ["Нажал, сэр", "Конечно, сэр"],
+  "equivalents": [["кликни"], ["нажмите"]]
+},
+
+{
+  "command": ["цитата"],
+  "action": "quote",
+  "parameters": {}
+},
+  {
+    "command": ["вставь"],
+    "action": "hotkey",
+    "parameters": {"hotkey": ["ctrl", "v"]},
+    "responses": ["Есть, сэр", "Сделано, сэр", "Вставил, сэр"]
+  },
+
+  {
+    "command": ["элемент", "вниз"],
+    "action": "num_key",
+    "parameters": {"key": "down"},
+    "responses": ["Есть, сэр", "Сделал, сэр", "Да, сэр"]
+  },
+
+  {
+    "command": ["элемент", "верх"],
+    "action": "num_key",
+    "parameters": {"key": "up"},
+    "responses": ["Есть, сэр", "Сделал, сэр", "Да, сэр"],
+    "equivalents": [["последние", "слова"], ["последнее", "слово"]]
+  },
+
+  {
+    "command": ["вернись", "назад"],
+    "action": "hotkey",
+    "parameters": {"hotkey": ["alt", "left"]},
+    "responses": ["Вернулся, сэр", "Есть, сэр", "Конечно, сэр"],
+    "equivalents": [["обратно", "назад"]]
+  },
+
+  {
+    "command": ["вернись", "вперёд"],
+    "action": "hotkey",
+    "parameters": {"hotkey": ["alt", "right"]},
+    "responses": ["Вернулся, сэр", "Есть, сэр", "Конечно, сэр"]
+  },
+
+  {
+    "command": ["нагрузка", "на", "процессор"],
+    "action": "cpu_load",
+    "parameters": {},
+    "responses": []
+  },
+
+  {
+    "command": ["нагрузка", "на", "память"],
+    "action": "ram_load",
+    "parameters": {},
+    "responses": []
+  },
+
+  {
+    "command": ["заряд", "батареи"],
+    "action": "battery_percentage",
+    "parameters": {},
+    "responses": [],
+    "equivalents": [["процент", "зарядки"], ["процент", "заряда", "батареи"]]
+  },
+
+  {
+    "command": ["заблокируй", "компьютер"],
+    "action": "subprocess",
+    "parameters": {"command": ["loginctl", "lock-session"]},
+    "responses": ["Конечно, сэр", "Заблокировал, сэр"],
+    "equivalents": [["заблокируй", "экран"], ["заблокируй", "ноутбук"]]
+  },
+
+  {
+    "command": ["разблокируй", "компьютер"],
+    "action": "subprocess",
+    "parameters": {"command": ["loginctl", "unlock-session"]},
+    "responses": ["Конечно, сэр", "Разблокировал, сэр"],
+    "equivalents": [["разблокируй", "экран"], ["разблокируй", "ноутбук"]]
+  },
+
+  {
+    "command": ["случайное", "число"],
+    "action": "random_number",
+    "parameters": {},
+    "responses": []
+  },
+  {
+    "command": ["увеличь", "яркость"],
+    "action": "brightness",
+    "parameters": {"command": "up"},
+    "responses": ["Есть, сэр", "Конечно, сэр", "Сию минуту", "Выполняю, сэр"],
+    "equivalents": [["повысь", "яркость"]]
+  },
+
+  {
+    "command": ["уменьши", "яркость"],
+    "action": "brightness",
+    "parameters": {"command": "down"},
+    "responses": ["Есть, сэр", "Конечно, сэр", "Сию минуту", "Выполняю, сэр"],
+    "equivalents": [["понизь", "яркость"]]
+  },
+
+  {
+    "command": ["поставь", "яркость"],
+    "action": "brightness",
+    "parameters": {"command": "set"},
+    "responses": ["Есть, сэр", "Конечно, сэр", "Сию минуту", "Выполняю, сэр"],
+    "equivalents": []
+  },
+  {
+    "command": ["перемотай", "на"],
+    "action": "youtube_scroll",
+    "parameters": {},
+    "responses": ["Перемотал, сэр", "Выполнено, сэр", "Конечно, сэр", "Операция завершена, сэр"]
+  },
+  {
+  "command": ["очисти", "корзину"],
+  "action": "subprocess",
+  "parameters": {"command": ["gio", "trash", "--empty"]},
+  "responses": ["Корзина очищена", "Файлы удалены, сэр", "Готово, сэр"],
+  "equivalents": [["почисти", "корзину"]]
+  }
+
   ],
   "repeat": [
     {
@@ -212,7 +625,8 @@
         "игры": ["sudo", "killall", "steam"],
         "простое сообщество": ["sudo", "killall", "Discord"],
         "центр приложений": ["sudo","killall","gnome-software"],
-        "прокси": ["sudo", "killall", "openvpn"]
+        "прокси": ["sudo", "killall", "openvpn"],
+        "браузер": ["sudo", "killall", "firefox"]
       },
       "synonyms": {"выключи": "закрой"}
     },
@@ -251,7 +665,10 @@
         "ватсап": "https://www.whatsapp.com",
         "сайт телеграм": "https://telegram.org",
         "телеграм сайт": "https://telegram.org",
-        "почту": "https://gmail.com"
+        "почту": "https://gmail.com",
+        "дневник": "https://nz.ua/menu",
+        "нейросеть": "https://chat.mistral.ai/chat",
+        "тик ток": "https://tiktok.com"
         },
       "synonyms": {"ютюб": "ютуб"}
     }

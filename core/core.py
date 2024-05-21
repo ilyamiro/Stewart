@@ -14,8 +14,11 @@ from utils.sys import config_load, run
 from utils.text import *
 from .data import Tree
 
+import screen_brightness_control as sbc
+
 import g4f
 import pyautogui
+from num2words import num2words
 
 CWD = os.path.dirname(os.path.abspath(__file__))
 GRAMMAR_FILE = f"{CWD}/data/grammar.txt"
@@ -84,7 +87,7 @@ class Core:
             file.write('["')
             file.write(" ".join(self.config.get("triggers")))
             file.write(
-                " один два три четыре пять шесть семь восемь девять десять одиннадцать двенадцать тринадцать четырнадцать пятнадцать шестнадцать семнадцать восемнадцать девятнадцать двадцать тридцать сорок пятьдесят шестьдесят семьдесят восемьдесят девяносто")
+                " один два три четыре пять шесть семь восемь девять десять одиннадцать двенадцать тринадцать четырнадцать пятнадцать шестнадцать семнадцать восемнадцать девятнадцать двадцать тридцать сорок пятьдесят шестьдесят семьдесят восемьдесят девяносто сто")
             file.write(self.tree.recognizer_string)
             file.write('"]')
 
@@ -94,8 +97,8 @@ class Core:
             run("xhost", "+local:$USER")
 
     def start(self):
-        self.recognition_thread = threading.Thread(target=self.recognition)
-        self.recognition_thread.start()
+        recognition_thread = threading.Thread(target=self.recognition)
+        recognition_thread.start()
 
     def recognition(self):
         # if condition is True, while cycle goes without not, if False - with not,
@@ -214,6 +217,11 @@ class Core:
         )
 
     @staticmethod
+    def quote(**kwargs):
+        random_ = random.choice(list(quotes.keys()))
+        say(f"Как говорил {random_}, {quotes[random_]}")
+
+    @staticmethod
     def hotkey(**kwargs):
         pyautogui.hotkey(*kwargs["parameters"]["hotkey"])
 
@@ -245,6 +253,22 @@ class Core:
         return answer
 
     @staticmethod
+    def brightness(**kwargs):
+        num = find_num_in_list(kwargs["command"])
+        if num:
+            if kwargs["parameters"]["command"] == "set":
+                sbc.set_brightness(num)
+            else:
+                sbc.set_brightness(
+                    sbc.get_brightness()[0] + (+num if kwargs["parameters"]["command"] == "up" else -num))
+        else:
+            sbc.set_brightness(sbc.get_brightness()[0] + (+25 if kwargs["parameters"]["command"] == "up" else -25))
+
+    def combination(self, **kwargs):
+        for command in kwargs["parameters"]["combination"]:
+            getattr(self, command["name"])(parameters=command["parameters"])
+
+    @staticmethod
     def tell_time(**kwargs):
         hour = datetime.datetime.now().hour
         minute = datetime.datetime.now().minute
@@ -272,6 +296,85 @@ class Core:
         else:
             os.system(
                 f'amixer set "Master" {current + 25 if kwargs["parameters"]["command"] == "up" else current - 25}% > /dev/null 2>&1')
+
+    @staticmethod
+    def move(**kwargs):
+        way = kwargs["parameters"]["way"]
+        num = find_num_in_list(kwargs["command"])
+        match way:
+            case "up":
+                pyautogui.moveRel(yOffset=-num if num else -500, xOffset=0)
+            case "down":
+                pyautogui.moveRel(yOffset=num if num else 500, xOffset=0)
+            case "right":
+                pyautogui.moveRel(xOffset=num if num else 500, yOffset=0)
+
+            case "left":
+                pyautogui.moveRel(xOffset=-num if num else -500, yOffset=0)
+
+    @staticmethod
+    def num_key(**kwargs):
+        num = find_num_in_list(kwargs["command"])
+        if num:
+            pyautogui.press(kwargs["parameters"]["key"], presses=num)
+        else:
+            pyautogui.press(kwargs["parameters"]["key"])
+
+    @staticmethod
+    def num_hotkey(**kwargs):
+        num = find_num_in_list(kwargs["command"])
+        if num:
+            for i in range(num):
+                pyautogui.hotkey(*kwargs["parameters"]["hotkey"])
+        else:
+            pyautogui.press(*kwargs["parameters"]["hotkey"])
+
+    @staticmethod
+    def end(**kwargs):
+        time.sleep(3)
+        os.kill(os.getpid(), signal.SIGINT)
+
+    def neuro_switch(self, **kwargs):
+        if kwargs["parameters"]["way"] == "on":
+            self.current_state.gpt = True
+            if not self.free_recognize:
+                self.recognition_enable_free()
+        else:
+            self.current_state.gpt = False
+
+    @staticmethod
+    def wait(**kwargs):
+        time.sleep(kwargs["parameters"]["time"])
+
+    @staticmethod
+    def write(**kwargs):
+        to_write = " ".join(kwargs["command"][1:])
+        clipman.copy(to_write)
+        time.sleep(0.1)
+        pyautogui.hotkey("ctrl", "v")
+
+    @staticmethod
+    def delete_text(**kwargs):
+        if kwargs["parameters"]["way"] == "one":
+            pyautogui.hotkey("ctrl", "backspace")
+        else:
+            pyautogui.hotkey("ctrl", "a")
+            pyautogui.press("backspace")
+
+    @staticmethod
+    def cpu_load(**kwargs):
+        say(f"Ваш процессор загружен на {num2words(psutil.cpu_percent(0.2), lang='ru')} процента, сэр")
+
+    @staticmethod
+    def battery_percentage(**kwargs):
+        say(f"Ваша батарея заряжена на {num2words(int(psutil.sensors_battery().percent), lang='ru')} процентов. " + random.choice(
+            ["Кабель зарядки подключен", "Питание от сети активно",
+             "Зарядное устройство подключено"]) if psutil.sensors_battery().power_plugged else "" + ", сэр")
+
+    @staticmethod
+    def ram_load(**kwargs):
+        self.tts.say(
+            f"Ваша оперативная память загружена на {num2words(psutil.virtual_memory().percent, lang='ru')} процента, сэр")
 
     @staticmethod
     def power_off(**kwargs):
@@ -424,3 +527,10 @@ class Core:
             self.tts.say(num2words(random.randint(min(num), max(num)), lang='ru') + ", сэр")
         else:
             self.tts.say("Назовите два числ+а, сэр")
+
+    @staticmethod
+    def tell_date(**kwargs):
+        now = datetime.datetime.now()
+        date = f"Сегодня {num2words(now.day, lang='ru', ordinal=True, gender='n')} {months.get(now.strftime('%B').lower())}" + random.choice(
+            ["", f" {num2words(now.year, lang='ru', ordinal=True, case='р')} года"])
+        self.tts.say(date)
