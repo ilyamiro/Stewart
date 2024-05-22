@@ -66,6 +66,12 @@ def config_load(path: str) -> dict:
             return data
 
 
+def config_dump(path: str, data):
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as file:
+            json.dump(data, path, ensure_ascii=False)
+
+
 def get_capslock_state():
     """
     Get capslock state: ON/OFF

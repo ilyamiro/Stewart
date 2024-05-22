@@ -50,35 +50,5 @@
     "Шерил Сэндберг": "Если вам предлагают место в ракетоносителе, не спрашивайте, что за место! Просто займите его.",
     "Авраам Линкольн": "Всегда опирайтесь на мысль о том, что ваше собственное решение добиться успеха намного важнее всего другого.",
     "Уинстон Черчилль": "Успех — это способность идти от поражения к поражению, не теряя оптимизма"
-},
-  "websites": {
-    "гугл": "https://www.google.com",
-    "яндекс": "https://www.yandex.ru",
-    "вконтакте": "https://vk.com",
-    "вк": "https://vk.com",
-    "одноклассники": "https://www.ok.ru",
-    "фейсбук": "https://www.facebook.com",
-    "инстаграм": "https://www.instagram.com",
-    "твиттер": "https://twitter.com",
-    "ютуб": "https://www.youtube.com",
-    "ютюб": "https://www.youtube.com",
-    "вайбер": "https://www.viber.com",
-    "ватсап": "https://www.whatsapp.com",
-    "сайт телеграм": "https://telegram.org",
-    "телеграм сайт": "https://telegram.org",
-    "хабр": "https://habr.com",
-    "дзен": "https://zen.yandex.ru",
-    "почту": "https://gmail.com"
-},
-"keyboard_dictionary": {
-    "энтер": "enter",
-    "пробел": "space",
-    "таб": "tab",
-    "тап": "tab",
-    "шифт": "shift",
-    "контрол": "ctrl",
-    "альт": "alt",
-    "капс": "caps_lock",
-    "эскейп": "esc"
 }
 }

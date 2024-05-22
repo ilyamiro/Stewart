@@ -158,6 +158,21 @@
       "responses": []
     },
     {
+      "command": ["сколько", "времени"],
+      "action": "tell_time",
+      "parameters": {},
+      "responses": [],
+      "synonyms": {"время": "времени"}
+    },
+    {
+      "command": ["дата"],
+      "action": "tell_date",
+      "parameters": {},
+      "responses": [],
+      "synonyms": {},
+      "equivalents": [["какой сегодня день"]]
+    },
+    {
       "command": ["найди", "страницу"],
       "action": "find_link",
       "parameters": {},
@@ -291,21 +306,21 @@
     "command": ["выключи", "компьютер", "сейчас"],
     "action": "power_off",
     "parameters": {"way": "now"},
-    "responses": ["Было честью служить вам, сэр. Надеюсь, вы обо мне не забудете!", "До встречи, сэр!"],
+    "responses": [],
     "synonyms": {"немедленно": "сейчас"}
   },
   {
-    "command": ["перезагрузи", "компьютер", "сейчас"],
+    "command": ["перезапуск", "компьютера", "сейчас"],
     "action": "power_reload",
     "parameters": {"way": "now"},
-    "responses": ["Было честью служить вам, сэр. Надеюсь, вы обо мне не забудете!", "До встречи, сэр!"],
-    "synonyms": {}
+    "responses": [],
+    "synonyms": {"компьютер": "компьютера"}
   },
   {
-    "command": ["перезагрузи", "компьютер"],
+    "command": ["перезапуск", "компьютера"],
     "action": "power_reload",
     "parameters": {"way": "off"},
-    "responses": ["Перезагружаю систему, сэр", "Конечно, сэр"],
+    "responses": [],
     "synonyms": {}
   },
 
@@ -315,6 +330,13 @@
     "parameters": {"key": "capslock"},
     "responses": ["Нажал, сэр", "Есть, сэр"],
     "equivalents": []
+  },
+  {
+    "command": ["подтверди"],
+    "action": "key",
+    "parameters": {"key": "enter"},
+    "responses": ["Нажал, сэр", "Есть, сэр"],
+    "equivalents": [["окей"]]
   },
 
   {
@@ -470,7 +492,20 @@
   "responses": ["Нажал, сэр", "Конечно, сэр"],
   "equivalents": [["кликни"], ["нажмите"]]
 },
-
+{
+  "command": ["запусти", "секундомер"],
+  "action": "stopwatch",
+  "parameters": {"way": "start"},
+  "responses": ["Запустил, сэр", "Время пошл+о!", "Секундомер запущен"],
+  "synonyms": {"запустить": "запусти"}
+},
+{
+  "command": ["останови", "секундомер"],
+  "action": "stopwatch",
+  "parameters": {"way": "stop"},
+  "responses": [],
+  "synonyms": {"остановить": "останови"}
+},
 {
   "command": ["цитата"],
   "action": "quote",
@@ -592,8 +627,25 @@
   "parameters": {"command": ["gio", "trash", "--empty"]},
   "responses": ["Корзина очищена", "Файлы удалены, сэр", "Готово, сэр"],
   "equivalents": [["почисти", "корзину"]]
+  },
+  {
+    "command": ["обнови", "систему"],
+    "action": "system",
+    "parameters": {"command": "kitty -- bash -c 'sudo dnf update ; exec bash'"},
+    "responses": ["Обновляю, сэр", "Запустил скрипт, сэр", "Обновление запущено, сэр"]
+  },
+  {
+    "command": ["очисти", "нейросеть"],
+    "action": "clear_neuro",
+    "parameters": {},
+    "responses": ["Удалил историю, сэр", "Запустил скрипт, сэр", "Очистил, сэр"]
+  },
+  {
+    "command": ["таймер"],
+    "action": "timer",
+    "parameters": {},
+    "responses": []
   }
-
   ],
   "repeat": [
     {
@@ -671,6 +723,22 @@
         "тик ток": "https://tiktok.com"
         },
       "synonyms": {"ютюб": "ютуб"}
+    },
+    {
+      "command": ["нажми"],
+      "action": "key",
+      "parameter": "key",
+      "links": {
+        "энтер": "enter",
+        "пробел": "space",
+        "таб": "tab",
+        "тап": "tab",
+        "шифт": "shift",
+        "контрол": "ctrl",
+        "альт": "alt",
+        "капс": "caps_lock",
+        "эскейп": "esc"
+      }
     }
   ]
 }
