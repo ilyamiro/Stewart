@@ -2,4 +2,5 @@
 test.py
 func.py
 audio/synthesis/audio.wav
+core/data/grammar.txt
 /.idea/
