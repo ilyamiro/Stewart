@@ -3,11 +3,17 @@ import random
 import os
 import threading
 import subprocess
+import signal
 import sys
 import webbrowser
+import clipman
 import time
 import datetime
 
+from os import environ
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+
+import pygame.mixer
 from playsound import playsound
 
 from audio import tts as TTS
@@ -27,8 +33,17 @@ from num2words import num2words
 CWD = os.path.dirname(os.path.abspath(__file__))
 
 
+def init():
+    clipman.init()
+    pygame.mixer.init()
+
+init()
+
+
+
 class Core:
     def __init__(self):
+        self.music_thread = None
         playsound(f"{CWD}/data/src/ringtones/startup.wav", block=False)
 
         self.stopwatch_end = None
@@ -228,7 +243,7 @@ class Core:
         subprocess.run(
             kwargs["parameters"]["command"],
             stdout=subprocess.DEVNULL,
-            stderr=subprocess.STDOUT
+            stderr=subprocess.STDOUT,
         )
 
     @staticmethod
@@ -303,6 +318,14 @@ class Core:
             self.config["gpt"] = False
         config_dump(f"{CWD}/config.json", self.config)
 
+    def play_audio(self, **kwargs):
+        path = kwargs.get("parameters").get("path")
+        pygame.mixer.music.load(path)
+        pygame.mixer.music.play()
+
+    @staticmethod
+    def kill_audio(**kwargs):
+        pygame.mixer.music.stop()
 
     @staticmethod
     def volume(**kwargs):
@@ -396,7 +419,9 @@ class Core:
     @staticmethod
     def write(**kwargs):
         to_write = " ".join(kwargs["command"][1:])
-        self.keyboard.type(to_write)
+        clipman.copy(to_write)
+        time.sleep(0.1)
+        pyautogui.hotkey("ctrl", "v")
 
     @staticmethod
     def delete_text(**kwargs):

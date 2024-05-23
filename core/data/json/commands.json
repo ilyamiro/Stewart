@@ -645,6 +645,24 @@
     "action": "timer",
     "parameters": {},
     "responses": []
+  },
+  {
+    "command": ["включи", "музыку"],
+    "action": "webbrowser",
+    "parameters": {"url": "https://soundcloud.com/you/likes"},
+    "responses": ["Конечно, сэр", "Открыл сайт с музыкой, сэр"]
+  },
+  {
+    "command": ["включи", "крутую", "музыку"],
+    "action": "play_audio",
+    "parameters": {"path": "/home/ilyamiro/Музыка/back_in_black.mp3"},
+    "responses": ["Рок-н-ролл, сэр!"]
+  },
+  {
+    "command": ["выключи", "музыку"],
+    "action": "kill_audio",
+    "parameters": {},
+    "responses": []
   }
   ],
   "repeat": [
@@ -680,7 +698,7 @@
         "прокси": ["sudo", "killall", "openvpn"],
         "браузер": ["sudo", "killall", "firefox"]
       },
-      "synonyms": {"выключи": "закрой"}
+      "synonyms": {}
     },
     {
       "command": ["открой", "настройки"],
