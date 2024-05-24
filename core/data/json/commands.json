@@ -177,7 +177,7 @@
       "action": "find_link",
       "parameters": {},
       "responses": [],
-      "synonyms": {"сайт":"страницу", "страница": "страницу"}
+      "synonyms": {}
     },
     {
       "command": ["найди", "информацию"],
@@ -211,8 +211,8 @@
       "command": ["страница", "вверх"],
       "action": "scroll",
       "parameters": {"way": "upz"},
-      "responses": ["Опустил, сэр"],
-      "synonyms": {"верх": "вверх", "сайт": "страница"}
+      "responses": ["Поднял, сэр"],
+      "synonyms": {"верх": "вверх"}
     },
     {
       "command": ["скажи"],
@@ -621,12 +621,12 @@
     "parameters": {},
     "responses": ["Перемотал, сэр", "Выполнено, сэр", "Конечно, сэр", "Операция завершена, сэр"]
   },
-  {
-  "command": ["очисти", "корзину"],
-  "action": "subprocess",
-  "parameters": {"command": ["gio", "trash", "--empty"]},
-  "responses": ["Корзина очищена", "Файлы удалены, сэр", "Готово, сэр"],
-  "equivalents": [["почисти", "корзину"]]
+    {
+    "command": ["очисти", "корзину"],
+    "action": "subprocess",
+    "parameters": {"command": ["gio", "trash", "--empty"]},
+    "responses": ["Корзина очищена", "Файлы удалены, сэр", "Готово, сэр"],
+    "equivalents": [["почисти", "корзину"]]
   },
   {
     "command": ["обнови", "систему"],
@@ -663,6 +663,53 @@
     "action": "kill_audio",
     "parameters": {},
     "responses": []
+  },
+  {
+    "command": ["включи", "блютуз"],
+    "action": "subprocess",
+    "parameters": {"command": ["bluetoothctl", "power", "on"]},
+    "responses": ["Блютуз включен, сэр", "Активировал, сэр"]
+  },
+  {
+    "command": ["выключи", "блютуз"],
+    "action": "subprocess",
+    "parameters": {"command": ["bluetoothctl", "power", "off"]},
+    "responses": ["Блютуз отключен, сэр", "Дизактивировал, сэр"]
+  },
+  {
+    "command": ["подключи", "наушники"],
+    "action": "subprocess",
+    "parameters": {"command": ["bluetoothctl", "connect", "28:6F:40:5E:D4:06"]},
+    "responses": ["Подключился к наушникам, сэр", "Активировал, сэр"],
+    "equivalents": [["подключись", "к", "наушникам"]]
+  },
+  {
+    "command": ["подключи", "колонку"],
+    "action": "subprocess",
+    "parameters": {"command": ["bluetoothctl", "connect", "14:3D:B7:D6:89:D2"]},
+    "responses": ["Подключился, сэр", "Активировал, сэр"],
+    "equivalents": [["подключись", "к", "колонке"]]
+  },
+  {
+    "command": ["отключи", "наушники"],
+    "action": "subprocess",
+    "parameters": {"command": ["bluetoothctl", "disconnect", "28:6F:40:5E:D4:06"]},
+    "responses": ["Отключился, сэр", "Разорвал соединение, сэр"],
+    "equivalents": [["отключись", "от", "наушников"]]
+  },
+  {
+    "command": ["отключи", "колонку"],
+    "action": "subprocess",
+    "parameters": {"command": ["bluetoothctl", "disconnect", "14:3D:B7:D6:89:D2"]},
+    "responses": ["Отключился, сэр", "Разорвал соединение, сэр"],
+    "equivalents": [["отключись", "от", "колонки"]]
+  },
+  {
+    "command": ["почини", "блютуз"],
+    "action": "subprocess",
+    "parameters": {"command": ["sudo", "systemctl", "restart", "bluetooth"]},
+    "responses": ["Пробую различные подходы, сэр", "Секунду, сэр"],
+    "synonyms": {"переключись": "переключи"}
   }
   ],
   "repeat": [
@@ -756,6 +803,16 @@
         "альт": "alt",
         "капс": "caps_lock",
         "эскейп": "esc"
+      }
+    },
+    {
+      "command": ["переключись", "на"],
+      "action": "subprocess",
+      "parameter": "command",
+      "links": {
+        "колонку": ["pactl" ,"set-default-sink", "bluez_output.14_3D_B7_D6_89_D2.1"],
+        "наушники": ["pactl", "set-default-sink", "bluez_output.28_6F_40_5E_D4_06.1"],
+        "ноутбук": ["pactl", "set-default-sink", "alsa_output.pci-0000_04_00.6.analog-stereo"]
       }
     }
   ]
