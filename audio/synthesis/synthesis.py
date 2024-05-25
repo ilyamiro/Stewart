@@ -15,12 +15,12 @@ class tts:
 
         self.working = True
 
-    def say(self, text):
+    def say(self, text, prosody: int = 94):
         """
         Say some text
         """
         if self.working:
-            thread = threading.Thread(target=self.synthesizer.say, kwargs={"text": text, "path": f"{CWD}/audio.wav"})
+            thread = threading.Thread(target=self.synthesizer.say, kwargs={"text": text, "path": f"{CWD}/audio.wav", "prosody_rate": prosody})
             thread.start()
 
     def off(self):

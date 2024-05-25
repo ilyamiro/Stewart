@@ -1,3 +1,5 @@
-from .synthesis import tts
+from .synthesis import tts as TTS
+
+tts = TTS()
 
 __all__ = ["tts"]

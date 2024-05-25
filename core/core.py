@@ -1,36 +1,41 @@
+# Standard library imports
 import json
-import random
 import os
-import threading
+import random
 import subprocess
 import signal
 import sys
-import webbrowser
-import clipman
 import time
+import threading
 import datetime
-from pyrogram import Client, filters
-from utils.sys import config_load
+import webbrowser
+from multiprocessing import Pipe, Process, Queue
 
-from os import environ
-environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
-
-import pygame.mixer
+# Third-party imports
 from playsound import playsound
-
-from audio import tts as TTS
-from audio import stt as STT
-
-from utils.sys import config_load, run, config_dump
-from utils.text import *
-from .data import Tree
-
-import screen_brightness_control as sbc
-from pynput.keyboard import Key, Controller
-
-import g4f
+from pyrogram import Client, filters
+import clipman
 import pyautogui
 from num2words import num2words
+import g4f
+import psutil
+from pymouse import PyMouse
+import screen_brightness_control as sbc
+from pynput.keyboard import Controller
+
+# Local/project-specific imports
+from audio import tts
+from audio import stt as STT
+from utils.sys import config_load, run, config_dump
+from utils.text import *
+from utils.some import half_hour_passed
+from .data import Tree
+from .data.scripts.telegram import start_bot
+
+# Environment variables setup
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+
+import pygame.mixer
 
 CWD = os.path.dirname(os.path.abspath(__file__))
 
@@ -51,6 +56,7 @@ class Core:
         # Threads Initialization
         self.music_thread = None
         self.recognition_thread = None
+        self.telegram_thread = None
 
         # Stopwatch Initialization
         self.stopwatch_end = None
@@ -70,18 +76,26 @@ class Core:
         self.gpt_start = []  # Reserved for future prompt
         self.message_history = []
 
-        # Telegram User script
-        run("python3.11", f"{CWD}/data/scripts/telegram.py")
-
         # Command Loading
         self.tree = Tree()
         self._load_commands()
         self._load_commands_repeat()
 
-        # TTS and STT Initialization
-        self.tts = TTS()
+        # STT Initialization
+        self.tts = tts
         self.stt = STT()
         self.keyboard = Controller()
+        self.mouse = PyMouse()
+
+        # Telegram User script Pipe connection
+        self.core_pipe, self.telegram_pipe = Pipe()
+        self.last_message = None
+
+        self.tg_userbot = Process(target=start_bot, args=(self.telegram_pipe,))
+        self.tg_userbot.start()
+
+        self.telegram_thread = threading.Thread(target=self.monitor)
+        self.telegram_thread.start()
 
         # STT Grammar Recognition
         self._create_grammar_recognition()
@@ -92,6 +106,12 @@ class Core:
 
         # Voice Assistant Ready Message
         self.tts.say("Конфигурация ядра успешно завершена. Голосовой ассистент готов к работе")
+
+    def monitor(self):
+        while True:
+            self.last_message = self.core_pipe.recv()
+            self.tts.say(
+                f"У вас одно новое сообщение от {self.last_message.from_user.first_name} {self.last_message.from_user.last_name}")
 
     def _load_commands(self):
         with open(f"{CWD}/data/json/commands.json", "r", encoding="utf-8") as file:
@@ -257,8 +277,7 @@ class Core:
             stderr=subprocess.STDOUT,
         )
 
-    @staticmethod
-    def quote(**kwargs):
+    def quote(self, **kwargs):
         random_ = random.choice(list(quotes.keys()))
         self.tts.say(f"Как говорил {random_}, {quotes[random_]}")
 
@@ -313,13 +332,21 @@ class Core:
         for command in kwargs["parameters"]["combination"]:
             getattr(self, command["name"])(parameters=command["parameters"])
 
-    @staticmethod
-    def click(**kwargs):
+    def read_tg(self, **kwargs):
+        if half_hour_passed(self.last_message.date):
+            self.tts.say(
+                random.choice(["В последний час новых сообщений не поступало, сэр", "Список входящих пуст, сэр"]))
+        else:
+            self.tts.say(
+                f"... {self.last_message.from_user.first_name} {self.last_message.from_user.last_name or ''} пишет. {self.last_message.text}",
+                prosody=89)
+
+    def click(self, **kwargs):
         num = find_num_in_list(kwargs["command"])
         if num:
-            pyautogui.click(clicks=num)
+            self.mouse.click(*self.mouse.position(), n=num)
         else:
-            pyautogui.click()
+            self.mouse.click(*self.mouse.position())
 
     def neuro_switch(self, **kwargs):
         if kwargs["parameters"]["way"] == "on":
@@ -329,7 +356,8 @@ class Core:
             self.config["gpt"] = False
         config_dump(f"{CWD}/config.json", self.config)
 
-    def play_audio(self, **kwargs):
+    @staticmethod
+    def play_audio(**kwargs):
         path = kwargs.get("parameters").get("path")
         pygame.mixer.music.load(path)
         pygame.mixer.music.play()
@@ -442,24 +470,20 @@ class Core:
             pyautogui.hotkey("ctrl", "a")
             pyautogui.press("backspace")
 
-    @staticmethod
-    def cpu_load(**kwargs):
+    def cpu_load(self, **kwargs):
         self.tts.say(f"Ваш процессор загружен на {num2words(psutil.cpu_percent(0.2), lang='ru')} процента, сэр")
 
-    @staticmethod
-    def battery_percentage(**kwargs):
+    def battery_percentage(self, **kwargs):
         self.tts.say(
             f"Ваша батарея заряжена на {num2words(int(psutil.sensors_battery().percent), lang='ru')} процентов. " + random.choice(
                 ["Кабель зарядки подключен", "Питание от сети активно",
                  "Зарядное устройство подключено"]) if psutil.sensors_battery().power_plugged else "" + ", сэр")
 
-    @staticmethod
-    def ram_load(**kwargs):
+    def ram_load(self, **kwargs):
         self.tts.say(
             f"Ваша оперативная память загружена на {num2words(psutil.virtual_memory().percent, lang='ru')} процента, сэр")
 
-    @staticmethod
-    def power_off(**kwargs):
+    def power_off(self, **kwargs):
         if kwargs["parameters"]["way"] == "off":
             num = find_num_in_list(kwargs["command"])
             if num:
@@ -477,8 +501,7 @@ class Core:
             self.tts.say("Выключение компьютера отменено")
             os.system("sudo shutdown -c /dev/null 2>&1")
 
-    @staticmethod
-    def power_reload(**kwargs):
+    def power_reload(self, **kwargs):
         if kwargs["parameters"]["way"] == "off":
             num = find_num_in_list(kwargs["command"])
             if num:
@@ -496,8 +519,7 @@ class Core:
             self.tts.say("Перезагрузка компьютера отменена")
             os.system("sudo shutdown -c /dev/null 2>&1")
 
-    @staticmethod
-    def capslock(**kwargs):
+    def capslock(self, **kwargs):
         if get_capslock_state():
             self.tts.say("Капслок уже включен, сэр")
         else:
@@ -505,10 +527,9 @@ class Core:
             pyautogui.press("capslock")
 
     def repeat(self, **kwargs):
-        self.handle(self.history[-2])
+        self.handle(self.message_history[-2])
 
-    @staticmethod
-    def find_link(**kwargs):
+    def find_link(self, **kwargs):
         search = "+".join(kwargs["command"][2:])
 
         url = "https://html.duckduckgo.com/html/?"
@@ -527,8 +548,7 @@ class Core:
                 'User-Agent'] = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
             webbrowser.open(fetch_first_link(s, 'reliance'))
 
-    @staticmethod
-    def find_info(**kwargs):
+    def find_info(self, **kwargs):
         self.tts.say("Ищу источники информации, сэр")
         search = "+".join(kwargs["command"][2:])
 
@@ -560,8 +580,7 @@ class Core:
                 )
                 self.tts.say(numbers_to_strings(answer))
 
-    @staticmethod
-    def find_video(**kwargs):
+    def find_video(self, **kwargs):
         search = "+".join(kwargs["command"][2:])
         html = urllib.request.urlopen(f"https://www.youtube.com/results?search_query={quote(search)}")
         video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
@@ -570,8 +589,7 @@ class Core:
         else:
             self.tts.say("Я не смог найти подходящее видео, или произошла ошибка, сэр")
 
-    @staticmethod
-    def find(**kwargs):
+    def find(self, **kwargs):
         to_find = " ".join(kwargs["command"][1:])
 
         def _find(query, site):
@@ -596,32 +614,28 @@ class Core:
     def scroll(**kwargs):
         match kwargs["parameters"]["way"]:
             case "up":
-                pyautogui.scroll(clicks=5)
+                mouse.wheel(1)
             case "down":
-                pyautogui.scroll(clicks=-5)
+                mouse.wheel(-1)
 
-    @staticmethod
-    def say_same(**kwargs):
+    def say_same(self, **kwargs):
         self.tts.say(" ".join(kwargs["command"][1:]))
 
-    @staticmethod
-    def random_number(**kwargs):
+    def random_number(self, **kwargs):
         num = find_num_in_list(kwargs["command"])
         if isinstance(num, tuple):
             self.tts.say(num2words(random.randint(min(num), max(num)), lang='ru') + ", сэр")
         else:
             self.tts.say("Назовите два числ+а, сэр")
 
-    @staticmethod
-    def tell_date(**kwargs):
+    def tell_date(self, **kwargs):
         now = datetime.datetime.now()
         date = f"Сегодня {num2words(now.day, lang='ru', ordinal=True, gender='n')} {self.obj.get('months').get(now.strftime('%B').lower())}" + random.choice(
             ["", f" {num2words(now.year, lang='ru', ordinal=True, case='р')} года"])
         self.tts.say(date)
 
-    @staticmethod
-    def tell_time(**kwargs):
+    def tell_time(self, **kwargs):
         hour = datetime.datetime.now().hour
         minute = datetime.datetime.now().minute
-        self.tts.say(f"Сейчас {num2words(hour, lang='ru')} час+{get_hour_suffix(hour)} и {num2words(minute, gender='f', lang='ru')} минут{get_minute_suffix(minute)}")
-
+        self.tts.say(
+            f"Сейчас {num2words(hour, lang='ru')} час+{get_hour_suffix(hour)} и {num2words(minute, gender='f', lang='ru')} минут{get_minute_suffix(minute)}")
