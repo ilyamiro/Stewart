@@ -4,10 +4,11 @@ import json
 
 from utils.sys import run
 
-from vosk import KaldiRecognizer, Model
+from vosk import KaldiRecognizer, Model, SetLogLevel
 import pyaudio
 
 CWD = os.path.dirname(os.path.abspath(__file__))
+SetLogLevel(-1)
 
 
 class stt:

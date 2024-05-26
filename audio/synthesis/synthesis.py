@@ -32,4 +32,3 @@ class tts:
     def switch(self):
         self.working = not self.working
 
-

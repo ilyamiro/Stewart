@@ -1,5 +1,6 @@
 # Standard library imports
 import json
+import logging
 import os
 import random
 import subprocess
@@ -9,19 +10,19 @@ import time
 import threading
 import datetime
 import webbrowser
-from multiprocessing import Pipe, Process, Queue
+from multiprocessing import Pipe, Process
 
 # Third-party imports
 from playsound import playsound
-from pyrogram import Client, filters
 import clipman
 import pyautogui
-from num2words import num2words
 import g4f
 import psutil
 from pymouse import PyMouse
 import screen_brightness_control as sbc
 from pynput.keyboard import Controller
+from pyrogram import Client
+import urllib
 
 # Local/project-specific imports
 from audio import tts
@@ -30,7 +31,8 @@ from utils.sys import config_load, run, config_dump
 from utils.text import *
 from utils.some import half_hour_passed
 from .data import Tree
-from .data.scripts.telegram import start_bot
+from core.data.connections.telegram.telegram import start_bot
+from logs import log
 
 # Environment variables setup
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
@@ -43,6 +45,7 @@ CWD = os.path.dirname(os.path.abspath(__file__))
 def _init():
     clipman.init()
     pygame.mixer.init()
+    log.info("clipman and pygame initialized")
 
 
 _init()
@@ -53,12 +56,15 @@ class Core:
         # Start-up Music
         playsound(f"{CWD}/data/src/ringtones/startup.wav", block=False)
 
+        log.info("Start-up sound played")
+
         # Threads Initialization
         self.music_thread = None
         self.recognition_thread = None
         self.telegram_thread = None
 
         # Stopwatch Initialization
+        self.trigger_required = True
         self.stopwatch_end = None
         self.stopwatch_enabled = None
         self.stopwatch_start = None
@@ -67,6 +73,8 @@ class Core:
         self.config = config_load(f"{CWD}/config.json")
         self.answers = config_load(f"{CWD}/data/json/answers.json")
         self.obj = config_load(f"{CWD}/data/json/obj.json")
+
+        log.info("Configuration files loaded")
 
         # System Initialization
         self.sys()
@@ -81,21 +89,33 @@ class Core:
         self._load_commands()
         self._load_commands_repeat()
 
+        log.debug("Command Tree initialized and commands loaded")
+
         # STT Initialization
         self.tts = tts
+
+        logging.debug("Text to speech initialized")
+
         self.stt = STT()
+
+        log.debug("Speech to text initialized")
+
         self.keyboard = Controller()
         self.mouse = PyMouse()
 
+        log.debug("Keyboard and mouse from PyUserInput initialized")
+
         # Telegram User script Pipe connection
         self.core_pipe, self.telegram_pipe = Pipe()
-        self.last_message = None
+        self.last_tg_message = None
 
         self.tg_userbot = Process(target=start_bot, args=(self.telegram_pipe,))
         self.tg_userbot.start()
 
         self.telegram_thread = threading.Thread(target=self.monitor)
         self.telegram_thread.start()
+
+        log.debug("Telegram user-bot pipes established, process started")
 
         # STT Grammar Recognition
         self._create_grammar_recognition()
@@ -104,14 +124,18 @@ class Core:
         # STT Current Grammar
         self.stt.current = self.stt_grammar
 
+        log.info("Restricted stt recognizer created. grammar.txt updated")
+
         # Voice Assistant Ready Message
         self.tts.say("Конфигурация ядра успешно завершена. Голосовой ассистент готов к работе")
 
+        log.info("Voice assistant ready message played")
+
     def monitor(self):
         while True:
-            self.last_message = self.core_pipe.recv()
+            self.last_tg_message = self.core_pipe.recv()
             self.tts.say(
-                f"У вас одно новое сообщение от {self.last_message.from_user.first_name} {self.last_message.from_user.last_name}")
+                f"У вас одно новое сообщение от {self.last_tg_message.from_user.first_name} {self.last_tg_message.from_user.last_name}")
 
     def _load_commands(self):
         with open(f"{CWD}/data/json/commands.json", "r", encoding="utf-8") as file:
@@ -166,9 +190,21 @@ class Core:
         while True:
             for word in self.stt.listen():
                 print(word)
+                # if self.trigger_required:
                 result = self._remove_trigger_word(word)
                 if result != "blank":
+                    # self.trigger_start()
                     self.handle(result)
+                # else:
+                #     self.handle(word)
+
+    # def trigger_start(self):
+    #     self.trigger_required = False
+    #     thread = threading.Timer(30, self.trigger_count)
+    #     thread.start()
+    #
+    # def trigger_count(self):
+    #     self.trigger_required = True
 
     def _add_command(self, command: tuple, handler: str, parameters: dict = None, synthesize: list = None,
                      synonyms: dict = None, equivalents: list = None):
@@ -205,6 +241,8 @@ class Core:
             total = self._multihandle(request)
             if len(total) == 1:
                 result = self.tree.find_command(total[0])
+                print(result)
+
                 if result:
                     res = list(result)
                     res.extend([total[0], request])
@@ -254,7 +292,7 @@ class Core:
             if word in self.tree.first_words:
                 if current_command:
                     list_of_commands.append(current_command)
-                if word in ["найди", "найти", "напиши", "запиши", "скажи"]:
+                if word in ["найди", "найти", "запиши", "скажи", "ответь"]:
                     current_command = split_request[split_request.index(word):]
                     list_of_commands.append(current_command)
                     current_command = []
@@ -333,13 +371,30 @@ class Core:
             getattr(self, command["name"])(parameters=command["parameters"])
 
     def read_tg(self, **kwargs):
-        if half_hour_passed(self.last_message.date):
+        if half_hour_passed(self.last_tg_message.date):
             self.tts.say(
                 random.choice(["В последний час новых сообщений не поступало, сэр", "Список входящих пуст, сэр"]))
         else:
-            self.tts.say(
-                f"... {self.last_message.from_user.first_name} {self.last_message.from_user.last_name or ''} пишет. {self.last_message.text}",
-                prosody=89)
+            if self.last_tg_message.voice:
+                self.tts.say("Загружаю")
+                time.sleep(0.5)
+                while True:
+                    if os.path.exists(f"{CWD}/data/connections/telegram/downloads/audio.ogg"):
+                        playsound(f"{CWD}/data/connections/telegram/downloads/audio.ogg")
+                        break
+                    time.sleep(0.5)
+            else:
+                self.tts.say(
+                    f"... {self.last_tg_message.from_user.first_name} {self.last_tg_message.from_user.last_name or ''} пишет. {self.last_tg_message.text}",
+                    prosody=89)
+
+    def reply_tg(self, **kwargs):
+        reply = " ".join(kwargs["command"][1:])
+        self.core_pipe.send((reply, self.last_tg_message.chat.id))
+
+    def send_tg(self, **kwargs):
+        reply = " ".join(kwargs["command"][2:])
+        self.core_pipe.send((reply, kwargs.get("parameters").get("id")))
 
     def click(self, **kwargs):
         num = find_num_in_list(kwargs["command"])
@@ -411,20 +466,19 @@ class Core:
         time.sleep(3)
         playsound(f"{CWD}/data/src/ringtones/beep.wav")
 
-    @staticmethod
-    def move(**kwargs):
+    def move(self, **kwargs):
         way = kwargs["parameters"]["way"]
         num = find_num_in_list(kwargs["command"])
+        x_cur, y_cur = self.mouse.position()
         match way:
             case "up":
-                pyautogui.moveRel(yOffset=-num if num else -500, xOffset=0)
+                self.mouse.move(y=y_cur-num if num else y_cur-500, x=x_cur)
             case "down":
-                pyautogui.moveRel(yOffset=num if num else 500, xOffset=0)
+                self.mouse.move(y=y_cur+num if num else y_cur+500, x=x_cur)
             case "right":
-                pyautogui.moveRel(xOffset=num if num else 500, yOffset=0)
-
+                self.mouse.move(y=y_cur, x=x_cur+num if num else x_cur+500)
             case "left":
-                pyautogui.moveRel(xOffset=-num if num else -500, yOffset=0)
+                self.mouse.move(y=y_cur, x=x_cur-num if num else x_cur-500)
 
     @staticmethod
     def num_key(**kwargs):

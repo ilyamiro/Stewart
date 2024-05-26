@@ -68,8 +68,8 @@ def config_load(path: str) -> dict:
 
 def config_dump(path: str, data):
     if os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as file:
-            json.dump(data, path, ensure_ascii=False)
+        with open(path, "w", encoding="utf-8") as file:
+            json.dump(data, file, ensure_ascii=False)
 
 
 def get_capslock_state():
@@ -92,7 +92,3 @@ def clear():
         os.system("cls")
     else:
         print("\033c")
-
-
-
-
