@@ -30,9 +30,10 @@ from audio import stt as STT
 from utils.sys import config_load, run, config_dump
 from utils.text import *
 from utils.some import half_hour_passed
-from .data import Tree
+from tree import Tree
 from core.data.connections.telegram.telegram import start_bot
 from logs import log
+from plugins import Loader
 
 # Environment variables setup
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
@@ -85,9 +86,8 @@ class Core:
         self.message_history = []
 
         # Command Loading
-        self.tree = Tree()
-        self._load_commands()
-        self._load_commands_repeat()
+        self.plugin_loader = Loader()
+        self.tree = self.plugin_loader.get_tree()
 
         log.debug("Command Tree initialized and commands loaded")
 
@@ -120,8 +120,6 @@ class Core:
         # STT Grammar Recognition
         self._create_grammar_recognition()
         self.stt_grammar = self.stt.grammar_recognition(f"{CWD}/data/grammar.txt")
-
-        # STT Current Grammar
         self.stt.current = self.stt_grammar
 
         log.info("Restricted stt recognizer created. grammar.txt updated")
@@ -137,35 +135,7 @@ class Core:
             self.tts.say(
                 f"У вас одно новое сообщение от {self.last_tg_message.from_user.first_name} {self.last_tg_message.from_user.last_name}")
 
-    def _load_commands(self):
-        with open(f"{CWD}/data/json/commands.json", "r", encoding="utf-8") as file:
-            commands = json.load(file).get("commands")
-            for command in commands:
-                equiv = command.get('equivalents', {})
-                if equiv:
-                    for eq in equiv:
-                        equiv[equiv.index(eq)] = tuple(eq)
-                self._add_command(
-                    tuple(command['command']),
-                    command['action'],
-                    command.get('parameters'),
-                    command.get('responses', []),
-                    command.get('synonyms', {}),
-                    equiv
-                )
 
-    def _load_commands_repeat(self):
-        with open(f"{CWD}/data/json/commands.json", "r", encoding="utf-8") as file:
-            commands_repeat = json.load(file).get("repeat")
-            for repeat in commands_repeat:
-                for key in repeat.get("links"):
-                    self._add_command(
-                        (*repeat.get("command"), key),
-                        repeat.get("action"),
-                        {repeat.get("parameter"): repeat.get("links").get(key)},
-                        self.answers.get("confirmative"),
-                        repeat.get("synonyms"),
-                    )
 
     def _create_grammar_recognition(self):
         with open(f"{CWD}/data/grammar.txt", "w") as file:
@@ -205,20 +175,6 @@ class Core:
     #
     # def trigger_count(self):
     #     self.trigger_required = True
-
-    def _add_command(self, command: tuple, handler: str, parameters: dict = None, synthesize: list = None,
-                     synonyms: dict = None, equivalents: list = None):
-        if not synonyms:
-            synonyms = {}
-        if not synthesize:
-            synthesize = []
-        if not parameters:
-            parameters = {}
-        if not equivalents:
-            equivalents = []
-        self.tree.add_commands(
-            {command: {"handler": handler, "parameters": parameters, "synthesize": synthesize, "synonyms": synonyms,
-                       "equivalents": equivalents}})
 
     def _remove_trigger_word(self, request):
         for trigger in self.config.get("triggers"):

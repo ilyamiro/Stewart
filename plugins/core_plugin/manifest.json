@@ -1,0 +1,13 @@
+{
+  "name": "core_plugin",
+  "author": "ilyamiro",
+  "version": "0.0.7",
+  "tree": {
+    "commands": [
+
+    ],
+    "repeat": [
+
+    ]
+  }
+}

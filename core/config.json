@@ -1,5 +1,21 @@
 {
-  "triggers": ["стюарт", "стюард"],
-  "gpt": false
-  
+    "triggers": [
+        "стюарт",
+        "стюард"
+    ],
+    "gpt": false,
+    "plugins": [
+        {
+            "name": "core_plugin",
+            "author": "ilyamiro",
+            "version": "0.0.7",
+            "tree": {
+                "commands": [],
+                "repeat": []
+            },
+            "manifest": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/core_plugin/manifest.json",
+            "architecture": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/core_plugin/core_plugin.py",
+            "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/core_plugin"
+        }
+    ]
 }
