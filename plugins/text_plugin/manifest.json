@@ -1,0 +1,38 @@
+{
+  "name": "text_plugin",
+  "author": "ilyamiro",
+  "version": "0.0.7",
+  "tree": {
+    "commands": [
+      {
+        "command": ["запиши"],
+        "action": "write",
+        "parameters": {},
+        "responses": ["Записываю, сэр", "Записал", "Конечно, сэр"]
+        },
+
+      {
+        "command": ["удали", "слово"],
+        "action": "delete_text",
+        "parameters": {"way": "one"},
+        "responses": ["Удалил слово, сэр", "Выполнено, сэр"],
+        "equivalents": [["удалить", "слово"], ["слова", "слово"]],
+        "related_commands": [["удали", "последнее", "слово"]]
+      },
+
+      {
+        "command": ["удали", "текст"],
+        "action": "delete_text",
+        "parameters": {"way": "all"},
+        "responses": ["Удалил весь текст, сэр", "Выполнено, сэр", "Удаление завершено"],
+        "equivalents": [["удали", "весь", "текст"]]
+      }
+    ],
+    "repeat": [
+
+    ],
+    "combination": [
+
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "search_plugin",
+  "author": "ilyamiro",
+  "version": "0.0.7",
+  "tree": {
+    "commands": [
+      {
+        "command": ["найди"],
+        "action": "find",
+        "parameters": {},
+        "responses": [],
+        "synonyms": {"найти":"найди"}
+      },
+      {
+        "command": ["найди", "видео"],
+        "action": "find_video",
+        "parameters": {},
+        "responses": []
+      },
+      {
+        "command": ["найди", "страницу"],
+        "action": "find_link",
+        "parameters": {},
+        "responses": [],
+        "synonyms": {}
+      },
+      {
+        "command": ["найди", "информацию"],
+        "action": "find_info",
+        "parameters": {},
+        "responses": [],
+        "synonyms": {"сайт":"страницу", "страница": "страницу"}
+      }
+    ],
+    "repeat": [
+
+    ],
+    "combination": [
+
+    ]
+  }
+}

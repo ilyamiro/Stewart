@@ -2,54 +2,33 @@
 import json
 import logging
 import os
-import random
 import subprocess
 import signal
 import sys
+import random
 import time
 import threading
-import datetime
-import webbrowser
+import inspect
 from multiprocessing import Pipe, Process
 
 # Third-party imports
 from playsound import playsound
-import clipman
-import pyautogui
+
 import g4f
-import psutil
-from pymouse import PyMouse
-import screen_brightness_control as sbc
-from pynput.keyboard import Controller
 from pyrogram import Client
-import urllib
 
 # Local/project-specific imports
 from audio import tts
 from audio import stt as STT
 from utils.sys import config_load, run, config_dump
-from utils.text import *
 from utils.some import half_hour_passed
 from tree import Tree
 from core.data.connections.telegram.telegram import start_bot
 from logs import log
 from plugins import Loader
 
-# Environment variables setup
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
-
-import pygame.mixer
-
 CWD = os.path.dirname(os.path.abspath(__file__))
 
-
-def _init():
-    clipman.init()
-    pygame.mixer.init()
-    log.info("clipman and pygame initialized")
-
-
-_init()
 
 
 class Core:
@@ -73,7 +52,6 @@ class Core:
         # Configuration Loading
         self.config = config_load(f"{CWD}/config.json")
         self.answers = config_load(f"{CWD}/data/json/answers.json")
-        self.obj = config_load(f"{CWD}/data/json/obj.json")
 
         log.info("Configuration files loaded")
 
@@ -86,24 +64,16 @@ class Core:
         self.message_history = []
 
         # Command Loading
-        self.plugin_loader = Loader()
-        self.tree = self.plugin_loader.get_tree()
+        self.loader = Loader()
+        self.architecture = self.loader.architecture
 
-        log.debug("Command Tree initialized and commands loaded")
+        self.load_default_commands()
 
-        # STT Initialization
-        self.tts = tts
-
-        logging.debug("Text to speech initialized")
+        log.debug("Command Tree initialized and plugins loaded")
 
         self.stt = STT()
 
         log.debug("Speech to text initialized")
-
-        self.keyboard = Controller()
-        self.mouse = PyMouse()
-
-        log.debug("Keyboard and mouse from PyUserInput initialized")
 
         # Telegram User script Pipe connection
         self.core_pipe, self.telegram_pipe = Pipe()
@@ -125,17 +95,23 @@ class Core:
         log.info("Restricted stt recognizer created. grammar.txt updated")
 
         # Voice Assistant Ready Message
-        self.tts.say("Конфигурация ядра успешно завершена. Голосовой ассистент готов к работе")
+        tts.say("Конфигурация ядра успешно завершена. Голосовой ассистент готов к работе")
 
         log.info("Voice assistant ready message played")
+
+    def load_default_commands(self):
+        with open(f"{CWD}/data/json/core_commands.json", "r", encoding="utf-8") as file:
+            data = json.load(file)
+            self.loader.load_commands(data.get("combination"))
+            self.loader.load_commands(data.get("commands"))
+            self.loader.load_commands_repeat(data.get("repeat"))
+        self.tree = self.loader.get_tree()
 
     def monitor(self):
         while True:
             self.last_tg_message = self.core_pipe.recv()
-            self.tts.say(
+            tts.say(
                 f"У вас одно новое сообщение от {self.last_tg_message.from_user.first_name} {self.last_tg_message.from_user.last_name}")
-
-
 
     def _create_grammar_recognition(self):
         with open(f"{CWD}/data/grammar.txt", "w") as file:
@@ -161,7 +137,7 @@ class Core:
             for word in self.stt.listen():
                 print(word)
                 # if self.trigger_required:
-                result = self._remove_trigger_word(word)
+                result = self.remove_trigger_word(word)
                 if result != "blank":
                     # self.trigger_start()
                     self.handle(result)
@@ -176,7 +152,7 @@ class Core:
     # def trigger_count(self):
     #     self.trigger_required = True
 
-    def _remove_trigger_word(self, request):
+    def remove_trigger_word(self, request):
         for trigger in self.config.get("triggers"):
             if trigger in request:
                 request = " ".join(request.split(trigger)[1:])[1:]
@@ -192,19 +168,18 @@ class Core:
     def handle(self, request):
         self.history_update(request)
         if not request:
-            self.tts.say(random.choice(self.answers.get("default")))
+            tts.say(random.choice(self.answers.get("default")))
         else:
             total = self._multihandle(request)
             if len(total) == 1:
                 result = self.tree.find_command(total[0])
                 print(result)
-
                 if result:
                     res = list(result)
                     res.extend([total[0], request])
                     self._synth_handle(res)
             elif len(total) > 1:
-                self.tts.say(random.choice(self.answers.get("confirmative")))
+                tts.say(random.choice(self.answers.get("confirmative")))
                 for command in total:
                     result = self.tree.find_command(command)
                     if result:
@@ -214,7 +189,7 @@ class Core:
             elif not total:
                 if self.config.get("gpt"):
                     answer = self.answer_gpt(request)
-                    self.tts.say(answer)
+                    tts.say(answer)
 
     def _synth_handle(self, request):
         @self._synthesis_dec(request[2])
@@ -225,16 +200,23 @@ class Core:
 
     def _just_handle(self, request):
         if request[0]:
-            thread = threading.Thread(target=getattr(self, request[0]),
+            thread = threading.Thread(target=getattr(self.find_arch(request[0]), request[0]),
                                       kwargs={"parameters": request[1], "command": request[3],
                                               "request": request[4]})
             thread.start()
+
+    def find_arch(self, name):
+        for module in self.architecture:
+            members = inspect.getmembers(module)
+            functions = [member[0] for member in members if inspect.isfunction(member[1])]
+            if name in functions:
+                return module
 
     def _synthesis_dec(self, to_say):
         def decorator(func):
             def wrapper():
                 if to_say:
-                    self.tts.say(random.choice([*to_say, random.choice(self.answers.get("confirmative"))]))
+                    tts.say(random.choice([*to_say, random.choice(self.answers.get("confirmative"))]))
                 func()
 
             return wrapper
@@ -263,33 +245,9 @@ class Core:
             list_of_commands.append(current_command)
         return list_of_commands
 
-    @staticmethod
-    def subprocess(**kwargs):
-        subprocess.run(
-            kwargs["parameters"]["command"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.STDOUT,
-        )
-
     def quote(self, **kwargs):
         random_ = random.choice(list(quotes.keys()))
         self.tts.say(f"Как говорил {random_}, {quotes[random_]}")
-
-    @staticmethod
-    def hotkey(**kwargs):
-        pyautogui.hotkey(*kwargs["parameters"]["hotkey"])
-
-    @staticmethod
-    def key(**kwargs):
-        pyautogui.press(kwargs["parameters"]["key"])
-
-    @staticmethod
-    def webbrowser(**kwargs):
-        webbrowser.open(kwargs["parameters"]["url"])
-
-    @staticmethod
-    def system(**kwargs):
-        os.system(kwargs.get("parameters").get("command"))
 
     def switch_recognizer(self, **kwargs):
         restricted = kwargs.get("parameters").get("restricted")
@@ -310,37 +268,23 @@ class Core:
         answer = numbers_to_strings(answer)
         return answer
 
-    @staticmethod
-    def brightness(**kwargs):
-        num = find_num_in_list(kwargs["command"])
-        if num:
-            if kwargs["parameters"]["command"] == "set":
-                sbc.set_brightness(num)
-            else:
-                sbc.set_brightness(
-                    sbc.get_brightness()[0] + (+num if kwargs["parameters"]["command"] == "up" else -num))
-        else:
-            sbc.set_brightness(sbc.get_brightness()[0] + (+25 if kwargs["parameters"]["command"] == "up" else -25))
-
     def combination(self, **kwargs):
         for command in kwargs["parameters"]["combination"]:
-            getattr(self, command["name"])(parameters=command["parameters"])
+            getattr(self.find_arch(command.get("name")), command.get("name"))(parameters=command["parameters"])
 
     def read_tg(self, **kwargs):
         if half_hour_passed(self.last_tg_message.date):
-            self.tts.say(
+            tts.say(
                 random.choice(["В последний час новых сообщений не поступало, сэр", "Список входящих пуст, сэр"]))
         else:
             if self.last_tg_message.voice:
-                self.tts.say("Загружаю")
-                time.sleep(0.5)
                 while True:
                     if os.path.exists(f"{CWD}/data/connections/telegram/downloads/audio.ogg"):
                         playsound(f"{CWD}/data/connections/telegram/downloads/audio.ogg")
                         break
                     time.sleep(0.5)
             else:
-                self.tts.say(
+                tts.say(
                     f"... {self.last_tg_message.from_user.first_name} {self.last_tg_message.from_user.last_name or ''} пишет. {self.last_tg_message.text}",
                     prosody=89)
 
@@ -352,13 +296,6 @@ class Core:
         reply = " ".join(kwargs["command"][2:])
         self.core_pipe.send((reply, kwargs.get("parameters").get("id")))
 
-    def click(self, **kwargs):
-        num = find_num_in_list(kwargs["command"])
-        if num:
-            self.mouse.click(*self.mouse.position(), n=num)
-        else:
-            self.mouse.click(*self.mouse.position())
-
     def neuro_switch(self, **kwargs):
         if kwargs["parameters"]["way"] == "on":
             self.config["gpt"] = True
@@ -366,31 +303,6 @@ class Core:
         if kwargs["parameters"]["way"] == "off":
             self.config["gpt"] = False
         config_dump(f"{CWD}/config.json", self.config)
-
-    @staticmethod
-    def play_audio(**kwargs):
-        path = kwargs.get("parameters").get("path")
-        pygame.mixer.music.load(path)
-        pygame.mixer.music.play()
-
-    @staticmethod
-    def kill_audio(**kwargs):
-        pygame.mixer.music.stop()
-
-    @staticmethod
-    def volume(**kwargs):
-        num = find_num_in_list(kwargs["command"])
-        current = os.popen('amixer get Master | grep -oP "\[\d+%\]"').read()
-        current = int(current.split()[0][1:-2])
-        if num:
-            if kwargs["parameters"]["command"] == "set":
-                os.system(f"amixer set 'Master' {num}% /dev/null 2>&1")
-            else:
-                os.system(
-                    f"amixer set 'Master' {current + num if kwargs['parameters']['command'] == 'up' else current - num}% > /dev/null 2>&1")
-        else:
-            os.system(
-                f'amixer set "Master" {current + 25 if kwargs["parameters"]["command"] == "up" else current - 25}% > /dev/null 2>&1')
 
     def stopwatch(self, **kwargs):
         if kwargs["parameters"]["way"] == "start":
@@ -401,57 +313,10 @@ class Core:
             self.stopwatch_end = datetime.datetime.now()
             passed = self.stopwatch_end - self.stopwatch_start
             hour, minute, second = passed.seconds // 3600, (passed.seconds % 3600) // 60, passed.seconds % 60
-            self.tts.say(
+            tts.say(
                 f"Прошло {num2words(hour, lang='ru') if hour != 0 else ''} {'час' + get_hour_suffix(hour) if hour != 0 else ''}, {num2words(minute, lang='ru') if minute != 0 else ''} {'минут' + get_minute_suffix(minute) if minute != 0 else ''} {num2words(second, lang='ru') if second != 0 else ''} {'секунд' + get_second_suffix(second) if second != 0 else ''}")
         elif kwargs["parameters"]["way"] == "stop" and not self.stopwatch_enabled:
-            self.tts.say(random.choice(["Секундомер не запущен", "Секундомер выключен"]))
-
-    def timer(self, **kwargs):
-        timer = find_num_in_list(kwargs["command"])
-        self.tts.say(random.choice(
-            [f"Запустил таймер на {num2words(timer, lang='ru', gender='f', )} минут{get_minute_suffix(timer)}, сэр",
-             f"Таймер на {num2words(timer, lang='ru', gender='f', )} минут{get_minute_suffix(timer)} запущен",
-             f"Таймер на {num2words(timer, lang='ru', gender='f')} минут{get_minute_suffix(timer)} был запущен"]))
-        timer_thread = threading.Timer(timer * 60, self.timers_up, args=[random.choice(
-            [f"Ваш таймер на {num2words(timer, lang='ru', gender='f')} минут{get_minute_suffix(timer)} закончился!",
-             f"Ваше время вышло, сэр, таймер на {num2words(timer, lang='ru', gender='f')} минут{get_minute_suffix(timer)} закончился!"])])
-        timer_thread.start()
-
-    def timers_up(self, line: str):
-        self.tts.say(line)
-        time.sleep(3)
-        playsound(f"{CWD}/data/src/ringtones/beep.wav")
-
-    def move(self, **kwargs):
-        way = kwargs["parameters"]["way"]
-        num = find_num_in_list(kwargs["command"])
-        x_cur, y_cur = self.mouse.position()
-        match way:
-            case "up":
-                self.mouse.move(y=y_cur-num if num else y_cur-500, x=x_cur)
-            case "down":
-                self.mouse.move(y=y_cur+num if num else y_cur+500, x=x_cur)
-            case "right":
-                self.mouse.move(y=y_cur, x=x_cur+num if num else x_cur+500)
-            case "left":
-                self.mouse.move(y=y_cur, x=x_cur-num if num else x_cur-500)
-
-    @staticmethod
-    def num_key(**kwargs):
-        num = find_num_in_list(kwargs["command"])
-        if num:
-            pyautogui.press(kwargs["parameters"]["key"], presses=num)
-        else:
-            pyautogui.press(kwargs["parameters"]["key"])
-
-    @staticmethod
-    def num_hotkey(**kwargs):
-        num = find_num_in_list(kwargs["command"])
-        if num:
-            for i in range(num):
-                pyautogui.hotkey(*kwargs["parameters"]["hotkey"])
-        else:
-            pyautogui.press(*kwargs["parameters"]["hotkey"])
+            tts.say(random.choice(["Секундомер не запущен", "Секундомер выключен"]))
 
     @staticmethod
     def end(**kwargs):
@@ -465,187 +330,10 @@ class Core:
     def wait(**kwargs):
         time.sleep(kwargs["parameters"]["time"])
 
-    @staticmethod
-    def write(**kwargs):
-        to_write = " ".join(kwargs["command"][1:])
-        clipman.copy(to_write)
-        time.sleep(0.1)
-        pyautogui.hotkey("ctrl", "v")
-
-    @staticmethod
-    def delete_text(**kwargs):
-        if kwargs["parameters"]["way"] == "one":
-            pyautogui.hotkey("ctrl", "backspace")
-        else:
-            pyautogui.hotkey("ctrl", "a")
-            pyautogui.press("backspace")
-
-    def cpu_load(self, **kwargs):
-        self.tts.say(f"Ваш процессор загружен на {num2words(psutil.cpu_percent(0.2), lang='ru')} процента, сэр")
-
-    def battery_percentage(self, **kwargs):
-        self.tts.say(
-            f"Ваша батарея заряжена на {num2words(int(psutil.sensors_battery().percent), lang='ru')} процентов. " + random.choice(
-                ["Кабель зарядки подключен", "Питание от сети активно",
-                 "Зарядное устройство подключено"]) if psutil.sensors_battery().power_plugged else "" + ", сэр")
-
-    def ram_load(self, **kwargs):
-        self.tts.say(
-            f"Ваша оперативная память загружена на {num2words(psutil.virtual_memory().percent, lang='ru')} процента, сэр")
-
-    def power_off(self, **kwargs):
-        if kwargs["parameters"]["way"] == "off":
-            num = find_num_in_list(kwargs["command"])
-            if num:
-                self.tts.say(
-                    f"Выключение компьютера произойдет через {num2words(num, lang='ru')} минут{get_minute_suffix(num)}, сэр")
-                os.system(f'shutdown -h +{num} /dev/null 2>&1')
-            else:
-                msg = "Выключение компьютера произойдет через одну минуту, сэр"
-                os.system(f'sudo shutdown -h +1 /dev/null 2>&1')
-                self.tts.say(msg)
-        elif kwargs["parameters"]["way"] == "now":
-            thread = threading.Timer(2.5, os.system, args=["sudo shutdown now"])
-            thread.start()
-        else:
-            self.tts.say("Выключение компьютера отменено")
-            os.system("sudo shutdown -c /dev/null 2>&1")
-
-    def power_reload(self, **kwargs):
-        if kwargs["parameters"]["way"] == "off":
-            num = find_num_in_list(kwargs["command"])
-            if num:
-                self.tts.say(
-                    f"Перезагрузка компьютера произойдет через {num2words(num, lang='ru')} минут{get_minute_suffix(num)}, сэр")
-                os.system(f'shutdown -r -h +{num} /dev/null 2>&1')
-            else:
-                msg = "Перезагрузка компьютера произойдет через одну минуту, сэр"
-                os.system(f'sudo shutdown -r -h +1 /dev/null 2>&1')
-                self.tts.say(msg)
-        elif kwargs["parameters"]["way"] == "now":
-            thread = threading.Timer(2.5, os.system, args=["sudo shutdown -r now"])
-            thread.start()
-        else:
-            self.tts.say("Перезагрузка компьютера отменена")
-            os.system("sudo shutdown -c /dev/null 2>&1")
-
-    def capslock(self, **kwargs):
-        if get_capslock_state():
-            self.tts.say("Капслок уже включен, сэр")
-        else:
-            self.tts.say("Выполнил, сэр")
-            pyautogui.press("capslock")
-
     def repeat(self, **kwargs):
         self.handle(self.message_history[-2])
 
-    def find_link(self, **kwargs):
-        search = "+".join(kwargs["command"][2:])
 
-        url = "https://html.duckduckgo.com/html/?"
-        params = {'q': search}
 
-        self.tts.say(f"Вот, что мне удалось найти по запросу {search}")
 
-        def fetch_first_link(a, symbol):
-            params['q'] = params['q'].format(symbol)
-            res = a.get(url, params=params)
-            soup = BeautifulSoup(res.text, "lxml")
-            return soup.select_one(".result__title > a.result__a").get("href")
 
-        with requests.Session() as s:
-            s.headers[
-                'User-Agent'] = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
-            webbrowser.open(fetch_first_link(s, 'reliance'))
-
-    def find_info(self, **kwargs):
-        self.tts.say("Ищу источники информации, сэр")
-        search = "+".join(kwargs["command"][2:])
-
-        url = "https://html.duckduckgo.com/html/?"
-        params = {'q': search}
-
-        def fetch_first_link(a, symbol):
-            params['q'] = params['q'].format(symbol)
-            res = a.get(url, params=params)
-            soup = BeautifulSoup(res.text, "lxml")
-            # return soup.select_one(".result__title > a.result__a").get("href")
-            found = soup.select(".result__title > a.result__a", limit=5)
-            return found[0]
-
-        with requests.Session() as s:
-            s.headers[
-                'User-Agent'] = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
-            link = str(fetch_first_link(s, 'reliance').get("href"))
-            subprocess.run(["node", f"{CWD}/data/scripts/node.js", link])
-
-            with open("text.txt", "r", encoding="utf-8") as file:
-                self.tts.say("Нашел источник, анализирую")
-                answer = g4f.ChatCompletion.create(
-                    messages=[{"role": "user",
-                               "content": f"Коротко просуммируй все сказанное далее: {file.read().split()[:90]}"}],
-                    provider=g4f.Provider.You,
-                    stream=False,
-                    model=g4f.models.default
-                )
-                self.tts.say(numbers_to_strings(answer))
-
-    def find_video(self, **kwargs):
-        search = "+".join(kwargs["command"][2:])
-        html = urllib.request.urlopen(f"https://www.youtube.com/results?search_query={quote(search)}")
-        video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
-        if video_ids:
-            webbrowser.open("https://www.youtube.com/watch?v=" + video_ids[0], autoraise=True)
-        else:
-            self.tts.say("Я не смог найти подходящее видео, или произошла ошибка, сэр")
-
-    def find(self, **kwargs):
-        to_find = " ".join(kwargs["command"][1:])
-
-        def _find(query, site):
-            self.tts.say("Вот что мне удалось найти по запросу" + to_find)
-            webbrowser.open(site + query, autoraise=True)
-
-        def remove_word(word, text):
-            for _ in text.split():
-                if word in _:
-                    return text.replace(_, "")
-
-        if "яндекс" in to_find:
-            to_find = remove_word("яндекс", to_find)
-            _find(to_find, "https://yandex.ru/search/?text=")
-        elif "ютуб" in to_find:
-            to_find = remove_word("ютуб", to_find)
-            _find(to_find, "https://www.youtube.com/results?search_query=")
-        else:
-            _find(to_find, "https://duckduckgo.com/?q=")
-
-    @staticmethod
-    def scroll(**kwargs):
-        match kwargs["parameters"]["way"]:
-            case "up":
-                mouse.wheel(1)
-            case "down":
-                mouse.wheel(-1)
-
-    def say_same(self, **kwargs):
-        self.tts.say(" ".join(kwargs["command"][1:]))
-
-    def random_number(self, **kwargs):
-        num = find_num_in_list(kwargs["command"])
-        if isinstance(num, tuple):
-            self.tts.say(num2words(random.randint(min(num), max(num)), lang='ru') + ", сэр")
-        else:
-            self.tts.say("Назовите два числ+а, сэр")
-
-    def tell_date(self, **kwargs):
-        now = datetime.datetime.now()
-        date = f"Сегодня {num2words(now.day, lang='ru', ordinal=True, gender='n')} {self.obj.get('months').get(now.strftime('%B').lower())}" + random.choice(
-            ["", f" {num2words(now.year, lang='ru', ordinal=True, case='р')} года"])
-        self.tts.say(date)
-
-    def tell_time(self, **kwargs):
-        hour = datetime.datetime.now().hour
-        minute = datetime.datetime.now().minute
-        self.tts.say(
-            f"Сейчас {num2words(hour, lang='ru')} час+{get_hour_suffix(hour)} и {num2words(minute, gender='f', lang='ru')} минут{get_minute_suffix(minute)}")

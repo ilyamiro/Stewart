@@ -23,10 +23,10 @@ class tts:
             thread = threading.Thread(target=self.synthesizer.say, kwargs={"text": text, "path": f"{CWD}/audio.wav", "prosody_rate": prosody})
             thread.start()
 
-    def off(self):
+    def turn_off(self):
         self.working = False
 
-    def on(self):
+    def turn_on(self):
         self.working = True
 
     def switch(self):

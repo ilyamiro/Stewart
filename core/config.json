@@ -6,16 +6,1937 @@
     "gpt": false,
     "plugins": [
         {
+            "name": "audio_plugin",
+            "author": "ilyamiro",
+            "version": "0.0.7",
+            "tree": {
+                "commands": [
+                    {
+                        "command": [
+                            "включи",
+                            "крутую",
+                            "музыку"
+                        ],
+                        "action": "play_audio",
+                        "parameters": {
+                            "path": "/home/ilyamiro/Музыка/back_in_black.mp3"
+                        },
+                        "responses": [
+                            "Рок-н-ролл, сэр!"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "выключи",
+                            "музыку"
+                        ],
+                        "action": "kill_audio",
+                        "parameters": {},
+                        "responses": []
+                    },
+                    {
+                        "command": [
+                            "скажи"
+                        ],
+                        "action": "say_same",
+                        "parameters": {},
+                        "responses": [],
+                        "synonyms": {}
+                    },
+                    {
+                        "command": [
+                            "увеличь",
+                            "громкость"
+                        ],
+                        "action": "volume",
+                        "parameters": {
+                            "command": "up"
+                        },
+                        "responses": [],
+                        "synonyms": {
+                            "увеличь": "прибавь"
+                        },
+                        "equivalents": [
+                            [
+                                "сделай",
+                                "громче"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "уменьши",
+                            "громкость"
+                        ],
+                        "action": "volume",
+                        "parameters": {
+                            "command": "down"
+                        },
+                        "responses": [],
+                        "synonyms": {
+                            "уменьши": "понизь"
+                        },
+                        "equivalents": [
+                            [
+                                "сделай",
+                                "тише"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "поставь",
+                            "громкость"
+                        ],
+                        "action": "volume",
+                        "parameters": {
+                            "command": "set"
+                        },
+                        "responses": [
+                            "Конечно, сэр",
+                            "Сию минуту, сэр"
+                        ],
+                        "synonyms": {}
+                    }
+                ],
+                "repeat": [],
+                "combination": []
+            },
+            "manifest": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/audio_plugin/manifest.json",
+            "architecture": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/audio_plugin/audio_arch.py",
+            "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/audio_plugin"
+        },
+        {
             "name": "core_plugin",
             "author": "ilyamiro",
             "version": "0.0.7",
             "tree": {
-                "commands": [],
-                "repeat": []
+                "commands": [
+                    {
+                        "command": [
+                            "открой",
+                            "проводник"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "xdg-open",
+                                "/home/ilyamiro"
+                            ]
+                        },
+                        "responses": [
+                            "Системные файлы открыты, сэр",
+                            "Открыл, сэр"
+                        ],
+                        "synonyms": {
+                            "открыть": "открой",
+                            "файлы": "проводник"
+                        },
+                        "equivalents": [
+                            [
+                                "запусти",
+                                "проводник"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "открой",
+                            "документы"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "xdg-open",
+                                "/home/ilyamiro/Документы"
+                            ]
+                        },
+                        "responses": [
+                            "Сделано, сэр",
+                            "Конечно, сэр",
+                            "Открыл документы, сэр",
+                            "Ваши документы, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "открой",
+                            "изображения"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "xdg-open",
+                                "/home/ilyamiro/Изображения"
+                            ]
+                        },
+                        "responses": [
+                            "Сделано, сэр",
+                            "Конечно, сэр",
+                            "Открыл папку изображений, сэр",
+                            "Ваши фото, сэр"
+                        ],
+                        "synonyms": {
+                            "изображение": "изображения"
+                        }
+                    },
+                    {
+                        "command": [
+                            "открой",
+                            "папку",
+                            "с",
+                            "музыкой"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "xdg-open",
+                                "/home/ilyamiro/Музыка"
+                            ]
+                        },
+                        "responses": [
+                            "Сделано, сэр",
+                            "Музыка, сэр"
+                        ],
+                        "synonyms": {},
+                        "equivalents": [
+                            [
+                                "открой",
+                                "папку",
+                                "музыки"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "открой",
+                            "загрузки"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "xdg-open",
+                                "/home/ilyamiro/Загрузки"
+                            ]
+                        },
+                        "responses": [
+                            "Загруженные файлы, сэр",
+                            "Загрузки, сэр"
+                        ],
+                        "synonyms": {},
+                        "equivalents": [
+                            [
+                                "открой",
+                                "папку",
+                                "загрузок"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "открой",
+                            "видео",
+                            "файлы"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "xdg-open",
+                                "/home/ilyamiro/Видео"
+                            ]
+                        },
+                        "responses": [
+                            "Видео файлы, сэр",
+                            "Открыл, сэр"
+                        ],
+                        "synonyms": {},
+                        "equivalents": [
+                            [
+                                "открой",
+                                "папку",
+                                "видео"
+                            ],
+                            [
+                                "открой",
+                                "папку",
+                                "с",
+                                "видео"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "открой",
+                            "настройки"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "gnome-control-center"
+                            ]
+                        },
+                        "responses": [
+                            "Видео файлы, сэр",
+                            "Открыл, сэр"
+                        ],
+                        "synonyms": {
+                            "параметры": "настройки"
+                        }
+                    },
+                    {
+                        "command": [
+                            "открой",
+                            "блокнот"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "gedit"
+                            ]
+                        },
+                        "responses": [
+                            "Открыл заметки, сэр, сэр",
+                            "Открыл, сэр"
+                        ],
+                        "synonyms": {
+                            "заметки": "блокнот"
+                        }
+                    },
+                    {
+                        "command": [
+                            "закрой",
+                            "окно"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "alt",
+                                "f4"
+                            ]
+                        },
+                        "responses": [
+                            "Выполнил, сэр",
+                            "Закрыл, сэр"
+                        ],
+                        "synonyms": {
+                            "приложение": "окно"
+                        }
+                    },
+                    {
+                        "command": [
+                            "сверни",
+                            "окно"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "alt",
+                                "h"
+                            ]
+                        },
+                        "responses": [
+                            "Выполнил, сэр",
+                            "Свернул, сэр"
+                        ],
+                        "synonyms": {}
+                    },
+                    {
+                        "command": [
+                            "сверни",
+                            "все",
+                            "окна"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "win",
+                                "d"
+                            ]
+                        },
+                        "responses": [
+                            "Выполнил, сэр",
+                            "Свернул, сэр"
+                        ],
+                        "synonyms": {}
+                    },
+                    {
+                        "command": [
+                            "сверни",
+                            "все",
+                            "окна"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "win",
+                                "d"
+                            ]
+                        },
+                        "responses": [
+                            "Выполнил, сэр",
+                            "Свернул, сэр"
+                        ],
+                        "synonyms": {}
+                    },
+                    {
+                        "command": [
+                            "закрой",
+                            "вкладку"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "ctrl",
+                                "w"
+                            ]
+                        },
+                        "responses": [
+                            "Закрыл вкладку, сэр",
+                            "Закрыл, сэр"
+                        ],
+                        "synonyms": {}
+                    },
+                    {
+                        "command": [
+                            "открой",
+                            "вкладку"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "ctrl",
+                                "t"
+                            ]
+                        },
+                        "responses": [
+                            "Открыл, сэр",
+                            "Открыл вкладку, сэр"
+                        ],
+                        "synonyms": {},
+                        "equivalents": [
+                            [
+                                "открой",
+                                "новую",
+                                "вкладку"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "включи",
+                            "прокси"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "sudo",
+                                "openvpn",
+                                "--config",
+                                "/home/ilyamiro/Загрузки/vpnbook-openvpn-de20/vpnbook-de20-tcp80.ovpn"
+                            ]
+                        },
+                        "responses": [
+                            "Подключаюсь к серверам, сэр",
+                            "Налаживаю соединение, сэр",
+                            "Обновляю прокси протокол, сэр",
+                            "Анализирую сеть и подключаюсь, сэр"
+                        ],
+                        "synonyms": {
+                            "подключи": "включи"
+                        }
+                    },
+                    {
+                        "command": [
+                            "выключи",
+                            "прокси"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "sudo",
+                                "killall",
+                                "openvpn"
+                            ]
+                        },
+                        "responses": [
+                            "Отключаюсь, сэр",
+                            "Прокси отключен, сэр"
+                        ],
+                        "synonyms": {
+                            "отключи": "выключи"
+                        }
+                    },
+                    {
+                        "command": [
+                            "открой",
+                            "историю",
+                            "браузера"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "ctrl",
+                                "shift",
+                                "h"
+                            ]
+                        },
+                        "responses": [
+                            "Открыл историю браузера, сэр",
+                            "Открыл, сэр"
+                        ],
+                        "synonyms": {}
+                    },
+                    {
+                        "command": [
+                            "открой",
+                            "загрузки",
+                            "браузера"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "ctrl",
+                                "shift",
+                                "y"
+                            ]
+                        },
+                        "responses": [
+                            "Открыл, сэр",
+                            "Открыл загрузки браузера, сэр"
+                        ],
+                        "synonyms": {}
+                    },
+                    {
+                        "command": [
+                            "сколько",
+                            "времени"
+                        ],
+                        "action": "tell_time",
+                        "parameters": {},
+                        "responses": [],
+                        "synonyms": {
+                            "время": "времени"
+                        }
+                    },
+                    {
+                        "command": [
+                            "дата"
+                        ],
+                        "action": "tell_date",
+                        "parameters": {},
+                        "responses": [],
+                        "synonyms": {},
+                        "equivalents": [
+                            [
+                                "какой сегодня день"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "обнови",
+                            "страницу"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "ctrl",
+                                "r"
+                            ]
+                        },
+                        "responses": [
+                            "Обновил страницу, сэр",
+                            "Сделано, сэр"
+                        ],
+                        "synonyms": {}
+                    },
+                    {
+                        "command": [
+                            "страница",
+                            "вниз"
+                        ],
+                        "action": "scroll",
+                        "parameters": {
+                            "way": "down"
+                        },
+                        "responses": [
+                            "Опустил, сэр"
+                        ],
+                        "synonyms": {}
+                    },
+                    {
+                        "command": [
+                            "страница",
+                            "вверх"
+                        ],
+                        "action": "scroll",
+                        "parameters": {
+                            "way": "up"
+                        },
+                        "responses": [
+                            "Поднял, сэр"
+                        ],
+                        "synonyms": {
+                            "верх": "вверх"
+                        }
+                    },
+                    {
+                        "command": [
+                            "открой",
+                            "приватный",
+                            "браузер"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "firefox",
+                                "--private-window"
+                            ]
+                        },
+                        "responses": [
+                            "Открываю браузер, сэр",
+                            "Браузер готов, сэр",
+                            "Открываю, сэр",
+                            "Конечно, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "курсор",
+                            "вправо"
+                        ],
+                        "action": "move",
+                        "parameters": {
+                            "way": "right"
+                        },
+                        "responses": [
+                            "Есть, сэр",
+                            "Конечно, сэр",
+                            "Переместил, сэр"
+                        ],
+                        "synonyms": {
+                            "право": "вправо",
+                            "лево": "влево"
+                        },
+                        "equivalents": [
+                            [
+                                "курсор",
+                                "в",
+                                "право"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "курсор",
+                            "вверх"
+                        ],
+                        "action": "move",
+                        "parameters": {
+                            "way": "up"
+                        },
+                        "responses": [
+                            "Есть, сэр",
+                            "Конечно, сэр",
+                            "Переместил, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "курсор",
+                                "в",
+                                "верх"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "курсор",
+                            "вниз"
+                        ],
+                        "action": "move",
+                        "parameters": {
+                            "way": "down"
+                        },
+                        "responses": [
+                            "Есть, сэр",
+                            "Конечно, сэр",
+                            "Переместил, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "курсор",
+                                "в",
+                                "низ"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "курсор",
+                            "влево"
+                        ],
+                        "action": "move",
+                        "parameters": {
+                            "way": "left"
+                        },
+                        "responses": [
+                            "Есть, сэр",
+                            "Конечно, сэр",
+                            "Переместил, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "курсор",
+                                "в",
+                                "лево"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "выключи",
+                            "компьютер"
+                        ],
+                        "action": "power_off",
+                        "parameters": {
+                            "way": "off"
+                        },
+                        "responses": [],
+                        "synonyms": {
+                            "систему": "компьютер",
+                            "ноутбук": "компьютер"
+                        }
+                    },
+                    {
+                        "command": [
+                            "выключи",
+                            "компьютер",
+                            "сейчас"
+                        ],
+                        "action": "power_off",
+                        "parameters": {
+                            "way": "now"
+                        },
+                        "responses": [],
+                        "synonyms": {
+                            "немедленно": "сейчас"
+                        }
+                    },
+                    {
+                        "command": [
+                            "перезапуск",
+                            "компьютера",
+                            "сейчас"
+                        ],
+                        "action": "power_reload",
+                        "parameters": {
+                            "way": "now"
+                        },
+                        "responses": [],
+                        "synonyms": {
+                            "компьютер": "компьютера"
+                        }
+                    },
+                    {
+                        "command": [
+                            "перезапуск",
+                            "компьютера"
+                        ],
+                        "action": "power_reload",
+                        "parameters": {
+                            "way": "off"
+                        },
+                        "responses": [],
+                        "synonyms": {}
+                    },
+                    {
+                        "command": [
+                            "нажми",
+                            "капс"
+                        ],
+                        "action": "key",
+                        "parameters": {
+                            "key": "capslock"
+                        },
+                        "responses": [
+                            "Нажал, сэр",
+                            "Есть, сэр"
+                        ],
+                        "equivalents": []
+                    },
+                    {
+                        "command": [
+                            "подтверди"
+                        ],
+                        "action": "key",
+                        "parameters": {
+                            "key": "enter"
+                        },
+                        "responses": [
+                            "Нажал, сэр",
+                            "Есть, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "окей"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "включи",
+                            "капс"
+                        ],
+                        "action": "capslock",
+                        "parameters": {},
+                        "responses": [],
+                        "equivalents": []
+                    },
+                    {
+                        "command": [
+                            "включи",
+                            "субтитры"
+                        ],
+                        "action": "key",
+                        "parameters": {
+                            "key": "c"
+                        },
+                        "responses": [
+                            "Конечно, сэр",
+                            "Включил субтитры, сэр",
+                            "Сделано, сэр"
+                        ],
+                        "equivalents": []
+                    },
+                    {
+                        "command": [
+                            "следующее",
+                            "видео"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "shift",
+                                "n"
+                            ]
+                        },
+                        "responses": [
+                            "Конечно, сэр",
+                            "Переключил, сэр",
+                            "Выполнил, сэр"
+                        ],
+                        "equivalents": []
+                    },
+                    {
+                        "command": [
+                            "предыдущее",
+                            "видео"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "left"
+                            ]
+                        },
+                        "responses": [
+                            "Конечно, сэр",
+                            "Переключил на предыдущее видео, сэр",
+                            "Готово, сэр"
+                        ],
+                        "equivalents": []
+                    },
+                    {
+                        "command": [
+                            "начало",
+                            "видео"
+                        ],
+                        "action": "key",
+                        "parameters": {
+                            "key": [
+                                "home"
+                            ]
+                        },
+                        "responses": [
+                            "Конечно, сэр",
+                            "Перешел на начало видео, сэр",
+                            "Сделано, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "начала",
+                                "видео"
+                            ],
+                            [
+                                "началу",
+                                "видео"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "конец",
+                            "видео"
+                        ],
+                        "action": "key",
+                        "parameters": {
+                            "key": [
+                                "end"
+                            ]
+                        },
+                        "responses": [
+                            "Конечно, сэр",
+                            "Перешел на конец видео, сэр",
+                            "Сделано, сэр",
+                            "Перемотал, сэр"
+                        ],
+                        "equivalents": []
+                    },
+                    {
+                        "command": [
+                            "пауза"
+                        ],
+                        "action": "key",
+                        "parameters": {
+                            "key": "space"
+                        },
+                        "responses": [
+                            "Нажал, сэр",
+                            "Поставил на паузу, сэр",
+                            "Конечно, сэр"
+                        ],
+                        "equivalents": []
+                    },
+                    {
+                        "command": [
+                            "скопируй"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "ctrl",
+                                "c"
+                            ]
+                        },
+                        "responses": [
+                            "Есть, сэр",
+                            "Сделано, сэр",
+                            "Скопировал, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "выдели",
+                            "все"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "ctrl",
+                                "a"
+                            ]
+                        },
+                        "responses": [
+                            "Есть, сэр",
+                            "Сделано, сэр",
+                            "Выделил, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "вырежи"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "ctrl",
+                                "x"
+                            ]
+                        },
+                        "responses": [
+                            "Есть, сэр",
+                            "Сделано, сэр",
+                            "Вырезал, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "нажми"
+                        ],
+                        "action": "click",
+                        "parameters": {},
+                        "responses": [
+                            "Нажал, сэр",
+                            "Конечно, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "кликни"
+                            ],
+                            [
+                                "нажмите"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "цитата"
+                        ],
+                        "action": "quote",
+                        "parameters": {}
+                    },
+                    {
+                        "command": [
+                            "вставь"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "ctrl",
+                                "v"
+                            ]
+                        },
+                        "responses": [
+                            "Есть, сэр",
+                            "Сделано, сэр",
+                            "Вставил, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "элемент",
+                            "вниз"
+                        ],
+                        "action": "num_key",
+                        "parameters": {
+                            "key": "down"
+                        },
+                        "responses": [
+                            "Есть, сэр",
+                            "Сделал, сэр",
+                            "Да, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "элемент",
+                            "верх"
+                        ],
+                        "action": "num_key",
+                        "parameters": {
+                            "key": "up"
+                        },
+                        "responses": [
+                            "Есть, сэр",
+                            "Сделал, сэр",
+                            "Да, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "последние",
+                                "слова"
+                            ],
+                            [
+                                "последнее",
+                                "слово"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "вернись",
+                            "назад"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "alt",
+                                "left"
+                            ]
+                        },
+                        "responses": [
+                            "Вернулся, сэр",
+                            "Есть, сэр",
+                            "Конечно, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "обратно",
+                                "назад"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "вернись",
+                            "вперёд"
+                        ],
+                        "action": "hotkey",
+                        "parameters": {
+                            "hotkey": [
+                                "alt",
+                                "right"
+                            ]
+                        },
+                        "responses": [
+                            "Вернулся, сэр",
+                            "Есть, сэр",
+                            "Конечно, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "нагрузка",
+                            "на",
+                            "процессор"
+                        ],
+                        "action": "cpu_load",
+                        "parameters": {},
+                        "responses": []
+                    },
+                    {
+                        "command": [
+                            "нагрузка",
+                            "на",
+                            "память"
+                        ],
+                        "action": "ram_load",
+                        "parameters": {},
+                        "responses": []
+                    },
+                    {
+                        "command": [
+                            "заряд",
+                            "батареи"
+                        ],
+                        "action": "battery_percentage",
+                        "parameters": {},
+                        "responses": [],
+                        "equivalents": [
+                            [
+                                "процент",
+                                "зарядки"
+                            ],
+                            [
+                                "процент",
+                                "заряда",
+                                "батареи"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "заблокируй",
+                            "компьютер"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "loginctl",
+                                "lock-session"
+                            ]
+                        },
+                        "responses": [
+                            "Конечно, сэр",
+                            "Заблокировал, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "заблокируй",
+                                "экран"
+                            ],
+                            [
+                                "заблокируй",
+                                "ноутбук"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "разблокируй",
+                            "компьютер"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "loginctl",
+                                "unlock-session"
+                            ]
+                        },
+                        "responses": [
+                            "Конечно, сэр",
+                            "Разблокировал, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "разблокируй",
+                                "экран"
+                            ],
+                            [
+                                "разблокируй",
+                                "ноутбук"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "случайное",
+                            "число"
+                        ],
+                        "action": "random_number",
+                        "parameters": {},
+                        "responses": []
+                    },
+                    {
+                        "command": [
+                            "увеличь",
+                            "яркость"
+                        ],
+                        "action": "brightness",
+                        "parameters": {
+                            "command": "up"
+                        },
+                        "responses": [
+                            "Есть, сэр",
+                            "Конечно, сэр",
+                            "Сию минуту",
+                            "Выполняю, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "повысь",
+                                "яркость"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "уменьши",
+                            "яркость"
+                        ],
+                        "action": "brightness",
+                        "parameters": {
+                            "command": "down"
+                        },
+                        "responses": [
+                            "Есть, сэр",
+                            "Конечно, сэр",
+                            "Сию минуту",
+                            "Выполняю, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "понизь",
+                                "яркость"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "поставь",
+                            "яркость"
+                        ],
+                        "action": "brightness",
+                        "parameters": {
+                            "command": "set"
+                        },
+                        "responses": [
+                            "Есть, сэр",
+                            "Конечно, сэр",
+                            "Сию минуту",
+                            "Выполняю, сэр"
+                        ],
+                        "equivalents": []
+                    },
+                    {
+                        "command": [
+                            "перемотай",
+                            "на"
+                        ],
+                        "action": "youtube_scroll",
+                        "parameters": {},
+                        "responses": [
+                            "Перемотал, сэр",
+                            "Выполнено, сэр",
+                            "Конечно, сэр",
+                            "Операция завершена, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "очисти",
+                            "корзину"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "gio",
+                                "trash",
+                                "--empty"
+                            ]
+                        },
+                        "responses": [
+                            "Корзина очищена",
+                            "Файлы удалены, сэр",
+                            "Готово, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "почисти",
+                                "корзину"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "обнови",
+                            "систему"
+                        ],
+                        "action": "system",
+                        "parameters": {
+                            "command": "kitty -- bash -c 'sudo dnf update ; exec bash'"
+                        },
+                        "responses": [
+                            "Обновляю, сэр",
+                            "Запустил скрипт, сэр",
+                            "Обновление запущено, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "включи",
+                            "музыку"
+                        ],
+                        "action": "webbrowser",
+                        "parameters": {
+                            "url": "https://soundcloud.com/you/likes"
+                        },
+                        "responses": [
+                            "Конечно, сэр",
+                            "Открыл сайт с музыкой, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "включи",
+                            "блютуз"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "bluetoothctl",
+                                "power",
+                                "on"
+                            ]
+                        },
+                        "responses": [
+                            "Блютуз включен, сэр",
+                            "Активировал, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "выключи",
+                            "блютуз"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "bluetoothctl",
+                                "power",
+                                "off"
+                            ]
+                        },
+                        "responses": [
+                            "Блютуз отключен, сэр",
+                            "Дизактивировал, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "подключи",
+                            "наушники"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "bluetoothctl",
+                                "connect",
+                                "28:6F:40:5E:D4:06"
+                            ]
+                        },
+                        "responses": [
+                            "Подключился к наушникам, сэр",
+                            "Активировал, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "подключись",
+                                "к",
+                                "ушам"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "подключи",
+                            "колонку"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "bluetoothctl",
+                                "connect",
+                                "14:3D:B7:D6:89:D2"
+                            ]
+                        },
+                        "responses": [
+                            "Подключился, сэр",
+                            "Активировал, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "подключись",
+                                "к",
+                                "колонке"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "отключи",
+                            "наушники"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "bluetoothctl",
+                                "disconnect",
+                                "28:6F:40:5E:D4:06"
+                            ]
+                        },
+                        "responses": [
+                            "Отключился, сэр",
+                            "Разорвал соединение, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "отключись",
+                                "от",
+                                "наушников"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "отключи",
+                            "колонку"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "bluetoothctl",
+                                "disconnect",
+                                "14:3D:B7:D6:89:D2"
+                            ]
+                        },
+                        "responses": [
+                            "Отключился, сэр",
+                            "Разорвал соединение, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "отключись",
+                                "от",
+                                "колонки"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "почини",
+                            "блютуз"
+                        ],
+                        "action": "subprocess",
+                        "parameters": {
+                            "command": [
+                                "sudo",
+                                "systemctl",
+                                "restart",
+                                "bluetooth"
+                            ]
+                        },
+                        "responses": [
+                            "Пробую различные подходы, сэр",
+                            "Секунду, сэр"
+                        ],
+                        "synonyms": {
+                            "переключись": "переключи"
+                        }
+                    },
+                    {
+                        "command": [
+                            "зачитай",
+                            "сообщение"
+                        ],
+                        "action": "read_tg",
+                        "parameters": {},
+                        "responses": [],
+                        "synonyms": {
+                            "прочитай": "зачитай",
+                            "сообщений": "сообщение",
+                            "сообщения": "сообщение"
+                        }
+                    },
+                    {
+                        "command": [
+                            "ответь"
+                        ],
+                        "action": "reply_tg",
+                        "parameters": {},
+                        "responses": [
+                            "Отправил ваше сообщение, сэр",
+                            "Ваш ответ был передан, сэр"
+                        ]
+                    }
+                ],
+                "repeat": [
+                    {
+                        "command": [
+                            "открой"
+                        ],
+                        "action": "subprocess",
+                        "parameter": "command",
+                        "links": {
+                            "обсидиан": [
+                                "/usr/bin/flatpak",
+                                "run",
+                                "--branch=stable",
+                                "--arch=x86_64",
+                                "--command=obsidian.sh",
+                                "--file-forwarding",
+                                "md.obsidian.Obsidian",
+                                "@@u",
+                                "%U",
+                                "@@",
+                                "/dev/null 2>&1"
+                            ],
+                            "телеграм": [
+                                "/usr/bin/flatpak",
+                                "run",
+                                "--branch=stable",
+                                "--arch=x86_64",
+                                "--command=telegram-desktop",
+                                "--file-forwarding",
+                                "org.telegram.desktop",
+                                "@@u",
+                                "%u",
+                                "@@",
+                                "/dev/null 2>&1"
+                            ],
+                            "терминал": [
+                                "kitty"
+                            ],
+                            "среду разработки": [
+                                "bash",
+                                "/home/ilyamiro/Документы/pycharm-community-2023.2.3/bin/pycharm.sh"
+                            ],
+                            "запись экрана": [
+                                "obs"
+                            ],
+                            "игры": [
+                                "steam"
+                            ],
+                            "ворд": [
+                                "libreoffice",
+                                "--writer"
+                            ],
+                            "простое сообщество": [
+                                "/usr/bin/flatpak",
+                                "run",
+                                "--branch=stable",
+                                "--arch=x86_64",
+                                "--command=com.discordapp.Discord",
+                                "com.discordapp.Discord",
+                                "/dev/null 2>&1"
+                            ],
+                            "центр приложений": [
+                                "gnome-software"
+                            ],
+                            "браузер": [
+                                "xdg-open",
+                                "https://"
+                            ]
+                        }
+                    },
+                    {
+                        "command": [
+                            "закрой"
+                        ],
+                        "action": "subprocess",
+                        "parameter": "command",
+                        "links": {
+                            "обсидиан": [
+                                "sudo",
+                                "killall",
+                                "obsidian"
+                            ],
+                            "телеграм": [
+                                "sudo",
+                                "killall",
+                                "telegram-desktop"
+                            ],
+                            "терминал": [
+                                "sudo",
+                                "killall",
+                                "kitty"
+                            ],
+                            "запись экрана": [
+                                "sudo",
+                                "killall",
+                                " obs"
+                            ],
+                            "игры": [
+                                "sudo",
+                                "killall",
+                                "steam"
+                            ],
+                            "простое сообщество": [
+                                "sudo",
+                                "killall",
+                                "Discord"
+                            ],
+                            "центр приложений": [
+                                "sudo",
+                                "killall",
+                                "gnome-software"
+                            ],
+                            "прокси": [
+                                "sudo",
+                                "killall",
+                                "openvpn"
+                            ],
+                            "браузер": [
+                                "sudo",
+                                "killall",
+                                "firefox"
+                            ]
+                        },
+                        "synonyms": {}
+                    },
+                    {
+                        "command": [
+                            "открой",
+                            "настройки"
+                        ],
+                        "action": "subprocess",
+                        "parameter": "command",
+                        "links": {
+                            "блютуз": [
+                                "gnome-control-center",
+                                "bluetooth"
+                            ],
+                            "питания": [
+                                "gnome-control-center",
+                                "power"
+                            ],
+                            "питание": [
+                                "gnome-control-center",
+                                "power"
+                            ],
+                            "вай фай": [
+                                "gnome-control-center",
+                                "wifi"
+                            ],
+                            "звука": [
+                                "gnome-control-center",
+                                "sound"
+                            ],
+                            "клавиатуры": [
+                                "gnome-control-center",
+                                "keyboard"
+                            ],
+                            "дисплея": [
+                                "gnome-control-center",
+                                "display"
+                            ],
+                            "экрана": [
+                                "gnome-control-center",
+                                "display"
+                            ],
+                            "системы": [
+                                "gnome-control-center",
+                                "system"
+                            ],
+                            "мышки": [
+                                "gnome-control-center",
+                                "mouse"
+                            ]
+                        },
+                        "synonyms": {
+                            "мыши": "мышки"
+                        }
+                    },
+                    {
+                        "command": [
+                            "открой"
+                        ],
+                        "action": "webbrowser",
+                        "parameter": "url",
+                        "links": {
+                            "гугл": "https://www.google.com",
+                            "яндекс": "https://www.yandex.ru",
+                            "вконтакте": "https://vk.com",
+                            "одноклассники": "https://www.ok.ru",
+                            "фейсбук": "https://www.facebook.com",
+                            "инстаграм": "https://www.instagram.com",
+                            "твиттер": "https://twitter.com",
+                            "ютуб": "https://www.youtube.com",
+                            "вайбер": "https://www.viber.com",
+                            "ватсап": "https://www.whatsapp.com",
+                            "сайт телеграм": "https://telegram.org",
+                            "телеграм сайт": "https://telegram.org",
+                            "почту": "https://gmail.com",
+                            "дневник": "https://nz.ua/menu",
+                            "нейросеть": "https://chat.mistral.ai/chat",
+                            "тик ток": "https://tiktok.com"
+                        },
+                        "synonyms": {
+                            "ютюб": "ютуб"
+                        }
+                    },
+                    {
+                        "command": [
+                            "нажми"
+                        ],
+                        "action": "key",
+                        "parameter": "key",
+                        "links": {
+                            "энтер": "enter",
+                            "пробел": "space",
+                            "таб": "tab",
+                            "тап": "tab",
+                            "шифт": "shift",
+                            "контрол": "ctrl",
+                            "альт": "alt",
+                            "капс": "caps_lock",
+                            "эскейп": "esc"
+                        }
+                    },
+                    {
+                        "command": [
+                            "переключись",
+                            "на"
+                        ],
+                        "action": "subprocess",
+                        "parameter": "command",
+                        "links": {
+                            "колонку": [
+                                "pactl",
+                                "set-default-sink",
+                                "bluez_output.14_3D_B7_D6_89_D2.1"
+                            ],
+                            "наушники": [
+                                "pactl",
+                                "set-default-sink",
+                                "bluez_output.28_6F_40_5E_D4_06.1"
+                            ],
+                            "ноутбук": [
+                                "pactl",
+                                "set-default-sink",
+                                "alsa_output.pci-0000_04_00.6.analog-stereo"
+                            ]
+                        }
+                    }
+                ],
+                "combination": [
+                    {
+                        "command": [
+                            "вырежи",
+                            "все"
+                        ],
+                        "action": "combination",
+                        "parameters": {
+                            "combination": [
+                                {
+                                    "name": "hotkey",
+                                    "parameters": {
+                                        "hotkey": [
+                                            "ctrl",
+                                            "a"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "hotkey",
+                                    "parameters": {
+                                        "hotkey": [
+                                            "ctrl",
+                                            "x"
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        "responses": [
+                            "Есть, сэр",
+                            "Сделано, сэр",
+                            "Вырезал, сэр"
+                        ]
+                    }
+                ]
             },
             "manifest": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/core_plugin/manifest.json",
             "architecture": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/core_plugin/core_plugin.py",
             "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/core_plugin"
+        },
+        {
+            "name": "time_plugin",
+            "author": "ilyamiro",
+            "version": "0.0.7",
+            "tree": {
+                "commands": [],
+                "repeat": [],
+                "combination": []
+            },
+            "manifest": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/time_plugin/manifest.json",
+            "architecture": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/time_plugin/time.py",
+            "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/time_plugin"
+        },
+        {
+            "name": "text_plugin",
+            "author": "ilyamiro",
+            "version": "0.0.7",
+            "tree": {
+                "commands": [
+                    {
+                        "command": [
+                            "запиши"
+                        ],
+                        "action": "write",
+                        "parameters": {},
+                        "responses": [
+                            "Записываю, сэр",
+                            "Записал",
+                            "Конечно, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "удали",
+                            "слово"
+                        ],
+                        "action": "delete_text",
+                        "parameters": {
+                            "way": "one"
+                        },
+                        "responses": [
+                            "Удалил слово, сэр",
+                            "Выполнено, сэр"
+                        ],
+                        "equivalents": [
+                            [
+                                "удалить",
+                                "слово"
+                            ],
+                            [
+                                "слова",
+                                "слово"
+                            ]
+                        ],
+                        "related_commands": [
+                            [
+                                "удали",
+                                "последнее",
+                                "слово"
+                            ]
+                        ]
+                    },
+                    {
+                        "command": [
+                            "удали",
+                            "текст"
+                        ],
+                        "action": "delete_text",
+                        "parameters": {
+                            "way": "all"
+                        },
+                        "responses": [
+                            "Удалил весь текст, сэр",
+                            "Выполнено, сэр",
+                            "Удаление завершено"
+                        ],
+                        "equivalents": [
+                            [
+                                "удали",
+                                "весь",
+                                "текст"
+                            ]
+                        ]
+                    }
+                ],
+                "repeat": [],
+                "combination": []
+            },
+            "manifest": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/text_plugin/manifest.json",
+            "architecture": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/text_plugin/text.py",
+            "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/text_plugin"
+        },
+        {
+            "name": "search_plugin",
+            "author": "ilyamiro",
+            "version": "0.0.7",
+            "tree": {
+                "commands": [
+                    {
+                        "command": [
+                            "найди"
+                        ],
+                        "action": "find",
+                        "parameters": {},
+                        "responses": [],
+                        "synonyms": {
+                            "найти": "найди"
+                        }
+                    },
+                    {
+                        "command": [
+                            "найди",
+                            "видео"
+                        ],
+                        "action": "find_video",
+                        "parameters": {},
+                        "responses": []
+                    },
+                    {
+                        "command": [
+                            "найди",
+                            "страницу"
+                        ],
+                        "action": "find_link",
+                        "parameters": {},
+                        "responses": [],
+                        "synonyms": {}
+                    },
+                    {
+                        "command": [
+                            "найди",
+                            "информацию"
+                        ],
+                        "action": "find_info",
+                        "parameters": {},
+                        "responses": [],
+                        "synonyms": {
+                            "сайт": "страницу",
+                            "страница": "страницу"
+                        }
+                    }
+                ],
+                "repeat": [],
+                "combination": []
+            },
+            "manifest": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/search_plugin/manifest.json",
+            "architecture": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/search_plugin/search_engine.py",
+            "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/search_plugin"
         }
     ]
 }

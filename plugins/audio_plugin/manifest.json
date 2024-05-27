@@ -1,0 +1,57 @@
+{
+  "name": "audio_plugin",
+  "author": "ilyamiro",
+  "version": "0.0.7",
+  "tree": {
+    "commands": [
+       {
+    "command": ["включи", "крутую", "музыку"],
+    "action": "play_audio",
+    "parameters": {"path": "/home/ilyamiro/Музыка/back_in_black.mp3"},
+    "responses": ["Рок-н-ролл, сэр!"]
+  },
+  {
+    "command": ["выключи", "музыку"],
+    "action": "kill_audio",
+    "parameters": {},
+    "responses": []
+  },
+    {
+      "command": ["скажи"],
+      "action": "say_same",
+      "parameters": {},
+      "responses": [],
+      "synonyms": {}
+    },
+      {
+    "command": ["увеличь", "громкость"],
+    "action": "volume",
+    "parameters": {"command": "up"},
+    "responses": [],
+    "synonyms": {"увеличь": "прибавь"},
+    "equivalents": [["сделай", "громче"]]
+    },
+  {
+    "command": ["уменьши", "громкость"],
+    "action": "volume",
+    "parameters": {"command": "down"},
+    "responses": [],
+    "synonyms": {"уменьши": "понизь"},
+    "equivalents": [["сделай", "тише"]]
+  },
+  {
+    "command": ["поставь", "громкость"],
+    "action": "volume",
+    "parameters": {"command": "set"},
+    "responses": ["Конечно, сэр", "Сию минуту, сэр"],
+    "synonyms": {}
+  }
+    ],
+    "repeat": [
+
+    ],
+    "combination": [
+
+    ]
+  }
+}

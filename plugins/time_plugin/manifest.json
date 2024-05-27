@@ -1,0 +1,16 @@
+{
+  "name": "time_plugin",
+  "author": "ilyamiro",
+  "version": "0.0.7",
+  "tree": {
+    "commands": [
+
+    ],
+    "repeat": [
+
+    ],
+    "combination": [
+
+    ]
+  }
+}
