@@ -5,7 +5,7 @@
 
 > Полезный и расширяемый голосовой помощник
 
-[![github release version](https://img.shields.io/github/v/release/ilyamiro/PersonalVA.svg)](https://github.com/ilyamiro/PersonalVA/releases/latest) [![license](https://img.shields.io/github/license/ilyamiro/PersonalVA.svg)](https://github.com/ilyamiro/PersonalVA/master/LICENSE)
+[![github release version](https://img.shields.io/github/v/release/ilyamiro/Stewart.svg)](https://github.com/ilyamiro/Stewart/releases/latest) [![license](https://img.shields.io/github/license/ilyamiro/Stewart.svg)](https://github.com/ilyamiro/Stewart/master/LICENSE)
 
 <a id="link-wiki" href="https://github.com/ilyamiro/Stewart/wiki"><strong>📘Исследовать вики</strong></a>
 <h3>**ПРЕДУПРЕЖДЕНИЕ**: проект еще не завершен и не работает должным образом</h3>
@@ -18,7 +18,7 @@
 
 ### О проекте
 
-Вы можете прочитать о **Stewart** в нашем <a href="#link-wiki">**вики!**</a>
+Вы можете прочитать о **Stewart** в нашем <a href=https://github.com/ilyamiro/Stewart/wiki>**вики!**</a>
 
 ### Установка
 
