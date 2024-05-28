@@ -13,7 +13,7 @@ import pygame.mixer
 pygame.mixer.init()
 
 
-def say_same(self, **kwargs):
+def say_same(**kwargs):
     tts.say(" ".join(kwargs["command"][1:]))
 
 

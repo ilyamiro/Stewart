@@ -6,6 +6,7 @@ import screen_brightness_control as sbc
 import clipman
 import pyautogui
 from pymouse import PyMouse
+import webbrowser as wb
 from num2words import num2words
 import psutil
 
@@ -44,6 +45,9 @@ def random_number(**kwargs):
     else:
         tts.say("Назовите два числ+а, сэр")
 
+def quote(**kwargs):
+    random_ = random.choice(list(obj.get("quotes").keys()))
+    tts.say(f"Как говорил {random_}, {obj.get('quotes')[random_]}")
 
 def scroll(**kwargs):
     match kwargs["parameters"]["way"]:
@@ -114,7 +118,7 @@ def move(**kwargs):
 
 
 def webbrowser(**kwargs):
-    webbrowser.open(kwargs["parameters"]["url"])
+    wb.open(kwargs["parameters"]["url"])
 
 
 def brightness(**kwargs):

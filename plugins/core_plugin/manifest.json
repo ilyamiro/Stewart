@@ -17,7 +17,7 @@
       "action": "subprocess",
       "parameters": {"command": ["xdg-open", "/home/ilyamiro/Документы"]},
       "responses": ["Сделано, сэр", "Конечно, сэр", "Открыл документы, сэр", "Ваши документы, сэр"]
-    },
+    }, 
     {
       "command": ["открой", "изображения"],
       "action": "subprocess",

@@ -99,6 +99,7 @@ class Core:
 
         log.info("Voice assistant ready message played")
 
+
     def load_default_commands(self):
         with open(f"{CWD}/data/json/core_commands.json", "r", encoding="utf-8") as file:
             data = json.load(file)
@@ -211,6 +212,9 @@ class Core:
             functions = [member[0] for member in members if inspect.isfunction(member[1])]
             if name in functions:
                 return module
+        if name in dir(self):
+            return self
+
 
     def _synthesis_dec(self, to_say):
         def decorator(func):
@@ -245,9 +249,6 @@ class Core:
             list_of_commands.append(current_command)
         return list_of_commands
 
-    def quote(self, **kwargs):
-        random_ = random.choice(list(quotes.keys()))
-        self.tts.say(f"Как говорил {random_}, {quotes[random_]}")
 
     def switch_recognizer(self, **kwargs):
         restricted = kwargs.get("parameters").get("restricted")
