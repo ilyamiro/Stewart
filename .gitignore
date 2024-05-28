@@ -1,0 +1,19 @@
+
+# test files for local use
+/test.py
+
+# audio production files
+/audio/synthesis/audio.wav
+
+# core generated files
+/core/data/grammar.txt
+
+# private files
+/core/data/connections/telegram/private.json
+/stewart_monitor.session
+/stewart_monitor.session-journal
+/core/data/connections/telegram/downloads/audio.ogg
+
+# cache and IDE files
+**/__pycache__
+/.idea/
