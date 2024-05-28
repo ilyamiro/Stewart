@@ -21,7 +21,7 @@
 
 ### About
 
-You can read about **Stewart** on our <a href="#link-wiki">**wiki!**</a>
+You can read about **Stewart** on our <a href="https://github.com/ilyamiro/Stewart/wiki">**wiki!**</a>
 
 ### Installation
 
