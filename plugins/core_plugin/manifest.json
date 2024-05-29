@@ -1,7 +1,14 @@
 {
-  "name": "core_plugin",
+  "name": "core",
   "author": "ilyamiro",
   "version": "0.0.7",
+  "session": {
+    "online": true,
+    "process": {
+      "required": false,
+      "start": null
+    }
+  },
   "tree": {
   "commands": [
     {
@@ -133,21 +140,6 @@
       "parameters": {"hotkey": ["ctrl", "shift", "y"]},
       "responses": ["Открыл, сэр", "Открыл загрузки браузера, сэр"],
       "synonyms": {}
-    },
-    {
-      "command": ["сколько", "времени"],
-      "action": "tell_time",
-      "parameters": {},
-      "responses": [],
-      "synonyms": {"время": "времени"}
-    },
-    {
-      "command": ["дата"],
-      "action": "tell_date",
-      "parameters": {},
-      "responses": [],
-      "synonyms": {},
-      "equivalents": [["какой сегодня день"]]
     },
     {
       "command": ["обнови", "страницу"],
@@ -515,20 +507,7 @@
     "parameters": {"command": ["sudo", "systemctl", "restart", "bluetooth"]},
     "responses": ["Пробую различные подходы, сэр", "Секунду, сэр"],
     "synonyms": {"переключись": "переключи"}
-  },
-  {
-    "command": ["зачитай", "сообщение"],
-    "action": "read_tg",
-    "parameters": {},
-    "responses": [],
-    "synonyms": {"прочитай": "зачитай", "сообщений": "сообщение", "сообщения": "сообщение"}
-  },
-  {
-    "command": ["ответь"],
-    "action": "reply_tg",
-    "parameters": {},
-    "responses": ["Отправил ваше сообщение, сэр", "Ваш ответ был передан, сэр"]
-  }
+  } 
   ],
   "repeat": [
     {

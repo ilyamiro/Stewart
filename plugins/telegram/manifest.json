@@ -1,0 +1,36 @@
+{
+  "name": "telegram",
+  "author": "ilyamiro",
+  "version": "0.1.0",
+  "session": {
+    "online": true,
+    "process": {
+      "required": true,
+      "start": "__get_telegram__"
+    }
+  },
+  "tree": {
+    "commands": [
+      {
+    "command": ["ответь"],
+    "action": "reply_tg",
+    "parameters": {},
+    "responses": ["Отправил ваше сообщение, сэр", "Ваш ответ был передан, сэр"]
+
+      },
+      {
+    "command": ["зачитай", "сообщение"],
+    "action": "read_tg",
+    "parameters": {},
+    "responses": [],
+    "synonyms": {"прочитай": "зачитай", "сообщений": "сообщение", "сообщения": "сообщение"}
+      }
+    ],
+    "repeat": [
+
+    ],
+    "combination": [
+
+    ]
+  }
+}

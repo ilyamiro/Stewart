@@ -1,7 +1,14 @@
 {
-  "name": "audio_plugin",
+  "name": "audio",
   "author": "ilyamiro",
   "version": "0.0.7",
+   "session": {
+    "online": true,
+    "process": {
+      "required": false,
+      "start_name": null
+    }
+  },
   "tree": {
     "commands": [
        {

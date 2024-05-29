@@ -1,0 +1,77 @@
+{
+  "name": "time",
+  "author": "ilyamiro",
+  "version": "0.0.7",
+  "session": {
+    "online": true,
+    "process": {
+      "required": false,
+      "start": null
+    }
+  },
+  "tree": {
+    "commands": [
+      {
+            "command": [
+                "запусти",
+                "секундомер"
+            ],
+            "action": "stopwatch",
+            "parameters": {
+                "way": "start"
+            },
+            "responses": [
+                "Запустил, сэр",
+                "Время пошл+о!",
+                "Секундомер запущен"
+            ],
+            "synonyms": {
+                "запустить": "запусти"
+            }
+        },
+        {
+            "command": [
+                "останови",
+                "секундомер"
+            ],
+            "action": "stopwatch",
+            "parameters": {
+                "way": "stop"
+            },
+            "responses": [],
+            "synonyms": {
+                "остановить": "останови"
+            }
+        },
+      {
+            "command": [
+                "таймер"
+            ],
+            "action": "timer",
+            "parameters": {},
+            "responses": []
+      },
+      {
+      "command": ["сколько", "времени"],
+      "action": "tell_time",
+      "parameters": {},
+      "responses": [],
+      "synonyms": {"время": "времени"}
+    },
+    {
+      "command": ["дата"],
+      "action": "tell_date",
+      "parameters": {},
+      "responses": [],
+      "synonyms": {},
+      "equivalents": [["какой сегодня день"]]
+    }
+    ],
+    "repeat": [
+
+    ],
+    "combination": [
+
+    ]
+  }
+}

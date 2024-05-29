@@ -6,9 +6,16 @@
     "gpt": false,
     "plugins": [
         {
-            "name": "audio_plugin",
+            "name": "audio",
             "author": "ilyamiro",
             "version": "0.0.7",
+            "session": {
+                "online": true,
+                "process": {
+                    "required": false,
+                    "start_name": null
+                }
+            },
             "tree": {
                 "commands": [
                     {
@@ -107,9 +114,16 @@
             "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/audio_plugin"
         },
         {
-            "name": "core_plugin",
+            "name": "core",
             "author": "ilyamiro",
             "version": "0.0.7",
+            "session": {
+                "online": true,
+                "process": {
+                    "required": false,
+                    "start": null
+                }
+            },
             "tree": {
                 "commands": [
                     {
@@ -505,32 +519,6 @@
                             "Открыл загрузки браузера, сэр"
                         ],
                         "synonyms": {}
-                    },
-                    {
-                        "command": [
-                            "сколько",
-                            "времени"
-                        ],
-                        "action": "tell_time",
-                        "parameters": {},
-                        "responses": [],
-                        "synonyms": {
-                            "время": "времени"
-                        }
-                    },
-                    {
-                        "command": [
-                            "дата"
-                        ],
-                        "action": "tell_date",
-                        "parameters": {},
-                        "responses": [],
-                        "synonyms": {},
-                        "equivalents": [
-                            [
-                                "какой сегодня день"
-                            ]
-                        ]
                     },
                     {
                         "command": [
@@ -1472,31 +1460,6 @@
                         "synonyms": {
                             "переключись": "переключи"
                         }
-                    },
-                    {
-                        "command": [
-                            "зачитай",
-                            "сообщение"
-                        ],
-                        "action": "read_tg",
-                        "parameters": {},
-                        "responses": [],
-                        "synonyms": {
-                            "прочитай": "зачитай",
-                            "сообщений": "сообщение",
-                            "сообщения": "сообщение"
-                        }
-                    },
-                    {
-                        "command": [
-                            "ответь"
-                        ],
-                        "action": "reply_tg",
-                        "parameters": {},
-                        "responses": [
-                            "Отправил ваше сообщение, сэр",
-                            "Ваш ответ был передан, сэр"
-                        ]
                     }
                 ],
                 "repeat": [
@@ -1790,22 +1753,126 @@
             "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/core_plugin"
         },
         {
-            "name": "time_plugin",
+            "name": "telegram",
             "author": "ilyamiro",
-            "version": "0.0.7",
+            "version": "0.1.0",
+            "session": {
+                "online": true,
+                "process": {
+                    "required": true,
+                    "start": "__get_telegram__"
+                }
+            },
             "tree": {
-                "commands": [],
+                "commands": [
+                    {
+                        "command": [
+                            "ответь"
+                        ],
+                        "action": "reply_tg",
+                        "parameters": {},
+                        "responses": [
+                            "Отправил ваше сообщение, сэр",
+                            "Ваш ответ был передан, сэр"
+                        ]
+                    },
+                    {
+                        "command": [
+                            "зачитай",
+                            "сообщение"
+                        ],
+                        "action": "read_tg",
+                        "parameters": {},
+                        "responses": [],
+                        "synonyms": {
+                            "прочитай": "зачитай",
+                            "сообщений": "сообщение",
+                            "сообщения": "сообщение"
+                        }
+                    }
+                ],
                 "repeat": [],
                 "combination": []
             },
-            "manifest": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/time_plugin/manifest.json",
-            "architecture": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/time_plugin/time.py",
-            "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/time_plugin"
+            "manifest": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/telegram/manifest.json",
+            "architecture": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/telegram/telegram.py",
+            "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/telegram"
         },
         {
-            "name": "text_plugin",
+            "name": "search",
             "author": "ilyamiro",
             "version": "0.0.7",
+            "session": {
+                "online": true,
+                "process": {
+                    "required": false,
+                    "start": null
+                }
+            },
+            "tree": {
+                "commands": [
+                    {
+                        "command": [
+                            "найди"
+                        ],
+                        "action": "find",
+                        "parameters": {},
+                        "responses": [],
+                        "synonyms": {
+                            "найти": "найди"
+                        }
+                    },
+                    {
+                        "command": [
+                            "найди",
+                            "видео"
+                        ],
+                        "action": "find_video",
+                        "parameters": {},
+                        "responses": []
+                    },
+                    {
+                        "command": [
+                            "найди",
+                            "страницу"
+                        ],
+                        "action": "find_link",
+                        "parameters": {},
+                        "responses": [],
+                        "synonyms": {}
+                    },
+                    {
+                        "command": [
+                            "найди",
+                            "информацию"
+                        ],
+                        "action": "find_info",
+                        "parameters": {},
+                        "responses": [],
+                        "synonyms": {
+                            "сайт": "страницу",
+                            "страница": "страницу"
+                        }
+                    }
+                ],
+                "repeat": [],
+                "combination": []
+            },
+            "manifest": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/search/manifest.json",
+            "architecture": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/search/search_engine.py",
+            "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/search"
+        },
+        {
+            "name": "text",
+            "author": "ilyamiro",
+            "version": "0.0.7",
+            "session": {
+                "online": true,
+                "process": {
+                    "required": false,
+                    "start": null
+                }
+            },
             "tree": {
                 "commands": [
                     {
@@ -1877,66 +1944,96 @@
                 "repeat": [],
                 "combination": []
             },
-            "manifest": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/text_plugin/manifest.json",
-            "architecture": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/text_plugin/text.py",
-            "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/text_plugin"
+            "manifest": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/text/manifest.json",
+            "architecture": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/text/text.py",
+            "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/text"
         },
         {
-            "name": "search_plugin",
+            "name": "time",
             "author": "ilyamiro",
             "version": "0.0.7",
+            "session": {
+                "online": true,
+                "process": {
+                    "required": false,
+                    "start": null
+                }
+            },
             "tree": {
                 "commands": [
                     {
                         "command": [
-                            "найди"
+                            "запусти",
+                            "секундомер"
                         ],
-                        "action": "find",
-                        "parameters": {},
-                        "responses": [],
+                        "action": "stopwatch",
+                        "parameters": {
+                            "way": "start"
+                        },
+                        "responses": [
+                            "Запустил, сэр",
+                            "Время пошл+о!",
+                            "Секундомер запущен"
+                        ],
                         "synonyms": {
-                            "найти": "найди"
+                            "запустить": "запусти"
                         }
                     },
                     {
                         "command": [
-                            "найди",
-                            "видео"
+                            "останови",
+                            "секундомер"
                         ],
-                        "action": "find_video",
+                        "action": "stopwatch",
+                        "parameters": {
+                            "way": "stop"
+                        },
+                        "responses": [],
+                        "synonyms": {
+                            "остановить": "останови"
+                        }
+                    },
+                    {
+                        "command": [
+                            "таймер"
+                        ],
+                        "action": "timer",
                         "parameters": {},
                         "responses": []
                     },
                     {
                         "command": [
-                            "найди",
-                            "страницу"
+                            "сколько",
+                            "времени"
                         ],
-                        "action": "find_link",
-                        "parameters": {},
-                        "responses": [],
-                        "synonyms": {}
-                    },
-                    {
-                        "command": [
-                            "найди",
-                            "информацию"
-                        ],
-                        "action": "find_info",
+                        "action": "tell_time",
                         "parameters": {},
                         "responses": [],
                         "synonyms": {
-                            "сайт": "страницу",
-                            "страница": "страницу"
+                            "время": "времени"
                         }
+                    },
+                    {
+                        "command": [
+                            "дата"
+                        ],
+                        "action": "tell_date",
+                        "parameters": {},
+                        "responses": [],
+                        "synonyms": {},
+                        "equivalents": [
+                            [
+                                "какой сегодня день"
+                            ]
+                        ]
                     }
                 ],
                 "repeat": [],
                 "combination": []
             },
-            "manifest": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/search_plugin/manifest.json",
-            "architecture": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/search_plugin/search_engine.py",
-            "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/search_plugin"
+            "manifest": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/time/manifest.json",
+            "architecture": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/time/time.py",
+            "path": "/home/ilyamiro/Документы/Жизнь/Projects/Stewart_Base/plugins/time"
         }
     ]
 }

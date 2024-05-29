@@ -2,6 +2,7 @@
 import json
 import os
 import inspect
+from multiprocessing import Process
 from importlib import import_module
 
 # Local application imports
@@ -81,7 +82,6 @@ class Loader:
 
         self.combination.extend(command_tree.get("combination"))
 
-
     def load_commands(self, commands: list):
         for command in commands:
             equiv = command.get('equivalents', {})
@@ -97,7 +97,7 @@ class Loader:
                 equiv
             )
 
-#TODO remove hardcoded synthesize parameters and import answers here, or find another solution
+    # TODO remove hardcoded synthesize parameters and import answers here, or find another solution
 
     def load_commands_repeat(self, commands_repeat: list):
         for repeat in commands_repeat:
@@ -106,21 +106,7 @@ class Loader:
                     (*repeat.get("command"), key),
                     repeat.get("action"),
                     {repeat.get("parameter"): repeat.get("links").get(key)},
-                    ["Да, сэр",
-                     "Сиеминутно, сэр",
-                     "Безусловно, сэр",
-                     "Конечно, сэр",
-                     "Пожалуйста, сэр",
-                     "Я приступил к выполнению, сэр",
-                     "Я займусь этим, сэр",
-                     "Я вас понял",
-                     "Понял",
-                     "Будет выполнено, сэр",
-                     "Будет сделано, сэр",
-                     "Я на этом, сэр",
-                     "Остается только подождать, сэр",
-                     "Сделано, сэр",
-                     "Я всегда готов помочь, сэр"],
+                    [],
                     repeat.get("synonyms"),
                 )
 
@@ -138,20 +124,21 @@ class Loader:
             {command: {"handler": handler, "parameters": parameters, "synthesize": synthesize, "synonyms": synonyms,
                        "equivalents": equivalents}})
 
-    def load_architecture(self, plugins):
+    @staticmethod
+    def load_architecture(plugins):
         modules = []
 
         for plugin in plugins:
             path = plugin.get("architecture")
-            path: str
+            start_process = plugin.get("session").get("process")
             try:
-                module = ".".join(path.split("/")[-3:])[:-3]
-                arch = import_module(module)
-                modules.append(arch)
-                functions = []
-                for name in dir(arch):
-                    if inspect.isfunction(getattr(arch, name)):
-                        modules.append(name)
+                name = ".".join(path.split("/")[-3:])[:-3]
+                module = import_module(name)
+                if start_process.get("required"):
+                    process = Process(target=getattr(module, start_process.get("start"))())
+                    process.start()
+                modules.append(module)
             except ModuleNotFoundError as e:
                 log.debug(f"Plugin {path} failed to load because of the following error: {e}")
         return modules
+

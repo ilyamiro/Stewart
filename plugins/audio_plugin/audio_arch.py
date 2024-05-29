@@ -23,7 +23,7 @@ def play_audio(**kwargs):
     pygame.mixer.music.play()
 
 
-def kill_audio(**kwargs):
+def kill_audio(**_):
     pygame.mixer.music.stop()
 
 

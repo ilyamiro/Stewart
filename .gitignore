@@ -9,10 +9,11 @@
 /core/data/grammar.txt
 
 # private files
-/core/data/connections/telegram/private.json
+/plugins/telegram/private.json
 /stewart_monitor.session
 /stewart_monitor.session-journal
-/core/data/connections/telegram/downloads/audio.ogg
+/plugins/telegram/downloads/*
+/plugins/telegram/manifest.json
 
 # cache and IDE files
 **/__pycache__

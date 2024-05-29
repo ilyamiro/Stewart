@@ -1,7 +1,14 @@
 {
-  "name": "search_plugin",
+  "name": "search",
   "author": "ilyamiro",
   "version": "0.0.7",
+  "session": {
+    "online": true,
+    "process": {
+      "required": false,
+      "start": null
+    }
+  },
   "tree": {
     "commands": [
       {

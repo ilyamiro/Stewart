@@ -3,7 +3,6 @@ import time
 import clipman
 import pyautogui
 
-
 clipman.init()
 
 

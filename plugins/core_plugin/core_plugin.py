@@ -2,40 +2,31 @@ import subprocess as sp
 import os
 import random
 import threading
-import screen_brightness_control as sbc
-import clipman
-import pyautogui
-from pymouse import PyMouse
 import webbrowser as wb
-from num2words import num2words
+from datetime import datetime
+
+
 import psutil
+import screen_brightness_control as sbc
+from pymouse import PyMouse
+from num2words import num2words
+import pyautogui
+import clipman
+
 
 from utils.text import *
 from utils.sys import *
 
 from audio import tts
 
+
 mouse = PyMouse()
 
 obj = config_load("data/obj.json")
 
 
-def cpu_load(**kwargs):
+def cpu_load(**_):
     tts.say(f"Ваш процессор загружен на {num2words(psutil.cpu_percent(0.2), lang='ru')} процента, сэр")
-
-
-def tell_date(**kwargs):
-    now = datetime.datetime.now()
-    date = f"Сегодня {num2words(now.day, lang='ru', ordinal=True, gender='n')} {obj.get('months').get(now.strftime('%B').lower())}" + random.choice(
-        ["", f" {num2words(now.year, lang='ru', ordinal=True, case='р')} года"])
-    tts.say(date)
-
-
-def tell_time(**kwargs):
-    hour = datetime.datetime.now().hour
-    minute = datetime.datetime.now().minute
-    tts.say(
-        f"Сейчас {num2words(hour, lang='ru')} час+{get_hour_suffix(hour)} и {num2words(minute, gender='f', lang='ru')} минут{get_minute_suffix(minute)}")
 
 
 def random_number(**kwargs):
@@ -45,9 +36,11 @@ def random_number(**kwargs):
     else:
         tts.say("Назовите два числ+а, сэр")
 
-def quote(**kwargs):
+
+def quote(**_):
     random_ = random.choice(list(obj.get("quotes").keys()))
     tts.say(f"Как говорил {random_}, {obj.get('quotes')[random_]}")
+
 
 def scroll(**kwargs):
     match kwargs["parameters"]["way"]:
@@ -133,14 +126,14 @@ def brightness(**kwargs):
         sbc.set_brightness(sbc.get_brightness()[0] + (+25 if kwargs["parameters"]["command"] == "up" else -25))
 
 
-def battery_percentage(**kwargs):
+def battery_percentage(**_):
     tts.say(
         f"Ваша батарея заряжена на {num2words(int(psutil.sensors_battery().percent), lang='ru')} процентов. " + random.choice(
             ["Кабель зарядки подключен", "Питание от сети активно",
              "Зарядное устройство подключено"]) if psutil.sensors_battery().power_plugged else "" + ", сэр")
 
 
-def ram_load(**kwargs):
+def ram_load(**_):
     tts.say(
         f"Ваша оперативная память загружена на {num2words(psutil.virtual_memory().percent, lang='ru')} процента, сэр")
 
@@ -183,7 +176,7 @@ def power_reload(**kwargs):
         os.system("sudo shutdown -c /dev/null 2>&1")
 
 
-def capslock(**kwargs):
+def capslock(**_):
     if get_capslock_state():
         tts.say("Капслок уже включен, сэр")
     else:
