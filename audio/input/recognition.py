@@ -78,13 +78,6 @@ class STT:
 
     def listen(self):
         data = self.stream.read(4000, exception_on_overflow=False)
-
-        # audio_int16 = np.frombuffer(data, np.int16)
-        # audio_float32 = int2float(audio_int16)
-        # vad_confidence = self.vad_model(torch.from_numpy(audio_float32), 16000).item()
-        # if vad_confidence > 0.85:
-        #     self.audio_chunk += data
-        #     if len(self.audio_chunk) >= 4096 * 2:
         if self.recognizer.AcceptWaveform(data):
             answer = json.loads(self.recognizer.Result())
             # TODO make the cosine distance boundary a config parameter
@@ -96,18 +89,6 @@ class STT:
                 elif distance > 0.45:
                     log.info(
                         f"Speaker distance is greater than a boundary: {distance} > 0.45. result will not be processed")
-
-            # self.audio_chunk = b""
-        #
-        # else:
-        #     self.audio_chunk = b""
-
-    # def count_voice_activity(self, times):
-    #     thread = threading.Timer(times, self.voice_activity_set)
-    #     thread.start()
-    #
-    # def voice_activity_set(self):
-    #     self.voice_detected = False
 
     def create_new_recognizer(self):
         recognizer = KaldiRecognizer(self.model, 16000)
