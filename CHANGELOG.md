@@ -1,5 +1,10 @@
 # CHANGELOG
 
+### v1.3.0
+
+- Using speaker diarization with vosk SPK model to recognize a speaker, and comparing him with a use of cosine distance 
+- Created development branch
+
 ### v1.2.5
 
 - Replaced all `os.path.dirname()` with `pathlib.Path`
