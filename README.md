@@ -24,7 +24,11 @@
 
 ## About
 
-Lines of code: **2555** 
+<<<<<<< HEAD
+Lines of code: **2716** 
+=======
+Lines of code: **2716** 
+>>>>>>> parent of 23ce15a (v1.3.1 - UNSTABLE. An attempt of creating a voice activity detection system.)
 
 A desktop-based voice assistant build with python.
 

@@ -14,11 +14,11 @@ mouse = Controller()
 log = logging.getLogger("module: " + __file__)
 
 from data.constants import CONFIG_FILE
-from utils.utils import yaml_load, import_all_from_module
+from utils.utils import yaml_load
 
 config = yaml_load(CONFIG_FILE)
 
-import_all_from_module(f"utils.{config['lang']['prefix']}.text")
+__import__(f"utils.{config['lang']['prefix']}.text")
 
 
 def subprocess(**kwargs):
